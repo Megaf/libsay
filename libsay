@@ -331,5 +331,5 @@ say()
         print_centre
     fi
 
-    unset msg print_centre colour_result align_result align colour
+    unset msg print_centre colour_result align_result align colour i p n
 }
