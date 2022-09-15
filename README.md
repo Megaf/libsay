@@ -2,7 +2,7 @@
 ## About:
 `libsay` is a library, it can be added to your shell and used directly or
 easily imported to you console based project to provide some nice and colourfull
-text output the users of your projects. All without changing your code!
+text output to the users of your projects. All without changing your code!
 
 ## Examples:
 `say lines.txt`
@@ -28,7 +28,11 @@ You can do `say "Hello world!` and the output will be:
 
 ![image](https://user-images.githubusercontent.com/6201512/190270607-652233d7-dc67-40ba-845c-ead2208de2cc.png)
 
-#### What it does
+1. Simply download the `libsay` library and save it to somewhere safe in your system, for example, `~/.local/lib/`.
+2. Load the lib at login by adding it to your `.bashrc`. Add at the end, for example, `source ~/.local/lib/libsay`.
+3. Just load it to your current terminal without changing anything else. `source libsay`.
+
+#### What it adds to your shell
 `libsay` can do a lot more than `say`. It will add the following commands:
 1. `say` -> Adds a nice border around the text.
 2. `draw` -> Allows you to "draw" lines and corners.
@@ -48,10 +52,9 @@ You can do `say "Hello world!` and the output will be:
 
 There's a lot more! Check the docs!
 
-### Install to your shell
-1. Simply download the `libsay` library and save it to somewhere safe in your system, for example, `~/.local/lib/`.
-2. Load the lib at login by adding it to your `.bashrc`. Add at the end, for example, `source ~/.local/lib/libsay`.
-3. Just load it to your current terminal without changing anything else. `source libsay`.
+### Adding to your project
+When you have libsay in your project, and you want highlight for error, warning, information, notices and debug messages, all you have to do is start the messages with either, `ERROR:`, `INFO:`, `WARN:/WARNING`, `DEBUG:`, or `NOTICE` and instead of using `echo` or `printf` you use `say`.
+Just add to the top of your code, `source libsay` and you will be good to go.
 
 # UNDER CONSTRUCTION.
 ## More to come.
