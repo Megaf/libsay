@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+# libsay
+# libsay library extension to add extra commands.
+#
+# Author:       Megaf - https://github.com/Megaf - mmegaf [at] gmail [dot] com
+# Date:         03/09/2022
+# GitHub:       https://github.com/Megaf/libsay
+# License:      GPL V3
+
+draw_example()
+{
+    # Draws a box.
+    draw \
+    topleftcorner top top top toprightcorner do_godown \
+    leftside do_space do_space do_space rightside do_godown \
+    bottomleftcorner bottom bottom bottom bottomrightcorner do_godown
+}
+
+write_text()
+{
+    letter_h=(
+    leftside do_space do_space rightside do_godown
+    leftside do_space do_space rightside do_godown
+    leftside_c line line rightside_c do_godown
+    leftside do_space do_space rightside do_godown
+    leftside do_space do_space rightside do_godown
+    )
+
+    letter_e=(
+    topleftcorner top top top do_godown
+    leftside do_space do_space do_space do_godown
+    leftside_c line line do_space do_godown
+    leftside do_space do_space do_space do_godown
+    bottomleftcorner bottom bottom bottom
+    )
+
+    space_=(
+    do_space do_space do_space do_space do_godown
+    do_space do_space do_space do_space do_godown
+    do_space do_space do_space do_space do_godown
+    do_space do_space do_space do_space do_godown
+    do_space do_space do_space do_space do_godown
+    )
+
+    line_a=(0 1 2 3 4)
+    line_b=(5 6 7 8 9)
+    line_c=(10 11 12 13)
+    line_d=(14 15 16 17)
+    line_e=(18 19 20 21)
+
+    draw_h()
+    {
+        draw \
+        leftside do_space do_space rightside do_godown \
+        leftside do_space do_space rightside do_godown \
+        leftside_c line line rightside_c do_godown \
+        leftside do_space do_space rightside do_godown \
+        leftside do_space do_space rightside dodown \
+        do_godown
+    }
+
+    draw_space()
+    {
+        draw \
+        do_space do_space do_space do_godown \
+        do_space do_space do_space do_godown \
+        do_space do_space do_space do_godown \
+        do_space do_space do_space do_godown \
+        do_godown
+    }
+
+    draw_hello()
+    {
+        draw \
+        leftside do_space do_space rightside do_space topleftcorner top top top do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space topleftcorner top top toprightcorner do_godown \
+        leftside do_space do_space rightside do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space rightside do_godown \
+        leftside_c line line rightside_c do_space leftside_c line line do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space rightside do_godown \
+        leftside do_space do_space rightside do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space rightside do_godown \
+        leftside do_space do_space rightside do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottomrightcorner do_godown
+    }
+}
