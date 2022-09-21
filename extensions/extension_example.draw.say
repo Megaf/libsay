@@ -79,4 +79,13 @@ write_text()
         leftside do_space do_space rightside do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space rightside do_godown \
         leftside do_space do_space rightside do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottomrightcorner do_godown
     }
+    draw_bye()
+    {
+        draw \
+        topleftcorner top top toprightcorner             do_space   leftside do_space do_space rightside    do_space    topleftcorner top top top do_godown \
+        leftside do_space do_space rightside             do_space   leftside do_space do_space rightside    do_space    leftside do_space do_space do_space do_godown \
+        leftside_c line line rightside_c                 do_space   bottomleftside line line   rightside_c  do_space    leftside_c line line do_space do_godown \
+        left_side do_space do_space rightside            do_space   do_space do_space do_space rightside    do_space    leftside do_space do_space do_space do_godown \
+        bottomleftcorner bottom bottom bottomrightcorner do_space   do_space do_space do_space rightside    do_space    bottomleftcorner bottom bottom bottom do_godown
+    }
 }

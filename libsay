@@ -111,10 +111,12 @@ draw()
     # Array with valid options for draw command.
     local parts_cmds=(
     topleftcorner top toprightcorner
-    leftside rightside
+    leftside rightside column
     leftside_c rightside_c
     bottomleftcorner bottom bottomrightcorner
-    line do_space do_godown do_save_pos do_go_pos
+    line bottom_c top_c
+    junction
+    do_space do_godown do_save_pos do_go_pos
     do_linefill do_margin do_autofill
     do_topfill do_bottomfill
     )
@@ -125,52 +127,57 @@ draw()
     # boxdoubleline
     [ "$style" = "boxdoubleline" ] && local parts=(
     ╔ ═ ╗
-    ║ ║
+    ║ ║ ║
     ╠ ╣
     ╚ ═ ╝
-    ═
+    ═ ╩ ╦
+    ╬
     )
 
     # boxverticalsinglehorizontaldouble
     [ "$style" = "boxverticalsinglehorizontaldouble" ] && local parts=(
     ╒ ═ ╕
-    │ │
+    │ │ ║
     ├ ┤
     ╘ ═ ╛
-    ─
+    ─ ╩ ╦
+    ┼
     )
 
     # boxverticaldoublehorizontalsingle
     [ "$style" = "boxverticaldoublehorizontalsingle" ] && local parts=(
     ╓ ─ ╖
-    ║ ║
+    ║ ║ │
     ╠ ╣
     ╙ ─ ╜
-    ─
+    ─ ┴ ┬
+    ┼
     )
 
     # boxsingleline
     [ "$style" = "boxsingleline" ] && local parts=(
     ┌ ─ ┐
-    │ │
+    │ │ │
     ├ ┤
     └ ─ ┘
-    ─
+    ─ ┴ ┬
+    ┼
     )
 
     # boxsolid
     [ "$style" = "boxsolid" ] && local parts=(
     █ ▀ █
-    █ █
+    █ █ █
     █ █
     █ ▄ █
-    ▄
+    ▄ █ █
+    █
     )
 
     # Dynamic draw commands.
-    do_linefill() { set_border_colour; symbol_repeat "${parts[10]}" "$linesize"; }
+    do_linefill() { set_border_colour; symbol_repeat "${parts[11]}" "$linesize"; }
     do_topfill() { set_border_colour; symbol_repeat "${parts[1]}" "$linesize"; }
-    do_bottomfill() { set_border_colour; symbol_repeat "${parts[8]}" "$linesize"; }
+    do_bottomfill() { set_border_colour; symbol_repeat "${parts[9]}" "$linesize"; }
     do_autofill() { symbol_repeat " " "$border_space"; }
     do_margin() { symbol_repeat " " "$margin"; }
     do_space() { printf "%0.s "; }
@@ -179,10 +186,12 @@ draw()
     # Array that contains the commands that are executed with "do_commands", like "do_margin"
     local dynmc_cmds=(
     "0" "0" "0"
-    "0" "0"
+    "0" "0" "0"
     "0" "0"
     "0" "0" "0"
-    "0" "do_space" "do_godown" "do_save_pos" "do_go_pos"
+    "0" "0" "0"
+    "0"
+    "do_space" "do_godown" "do_save_pos" "do_go_pos"
     "do_linefill" "do_margin" "do_autofill"
     "do_topfill" "do_bottomfill"
     )
@@ -216,10 +225,8 @@ say()
     {
         [ "$1" = "colour_command" ] && local options=( --colour --color )
         [ "$1" = "alignment_command" ] && local options=( --align )
-        [ "$1" = "colour" ] && local options=(black red green yellow blue magenta cyan
-        white grey light_red light_green light_yellow light_blue light_magenta light_cyan
-        bright_white bright_black
-        )
+        [ "$1" = "colour" ] && local options=( black red green yellow blue magenta cyan white 
+        grey light_red light_green light_yellow light_blue light_magenta light_cyan bright_white )
         [ "$1" = "alignment" ] && local options=( centre center left right )
 
         for i_search_thing in "${options[@]}"; do
