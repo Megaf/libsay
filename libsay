@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 0.9-202209.21.170800
+# libsay - Version: 0.9-202209.21.173700
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -304,8 +304,8 @@ say()
 
     local longest_line="$(find_longest_line)" # Length of the longest line in the text.
     unset -f find_longest_line
-    local margin="1" # Default margin size between the side of the box and text.
-    local spacesize="3" # Basically adjust the amount of space on both sides of the text to the box.
+    local margin="0" # Default margin size between the side of the box and text.
+    local spacesize="1" # Basically adjust the amount of space on both sides of the text to the box.
     local minimal_size="10" # Box will not be smaller than this, no matter how little the text is.
     if (( "$longest_line" <= "$minimal_size" )); then
         local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
