@@ -273,8 +273,19 @@ say()
     # Checks if input is coming from the standard input.
     if [ ! -t 0 ]; then
         msg="$(cat)"
-    elif [[ "$1" == *".txt" ]]; then # Or if it's coming from a text file.
-        msg="$(cat $1)"
+    elif [[ "$*" == *".txt"* ]]; then
+        local arguments=( "$@"  )
+        echo "Working with a text file."
+        for text_file in "${arguments[@]}"; do
+            echo "args are: '${arguments[@]}'"
+            if [[ "$text_file" == *".txt" ]]; then
+                echo "Found arg '$text_file' for text file."
+                msg="$(cat $text_file)"
+                unset -v text_file arguments
+                break
+            fi
+        done
+        unset -v text_file arguments
     fi
 
     # Function that will read text in '$msg' and find how long is the longest line.
