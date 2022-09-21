@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# benchmark_libsay.sh - Version: 1.0-202209.21.180000
+# benchmark_libsay.sh - Version: 1.1-202209.21.180000
 # Simple libsay benchmark.
 #
 # Author: Megaf - https://github.com/Megaf/ - mmegaf [at] gmail [dot] com
@@ -13,7 +13,8 @@
 # './benchmark_libsay.sh n' where n is the number of runs you want to try.
 
 source libsay
-[ -z "$*" ] && runs=50 || runs="$*"
+[ ! "$*" ] && runs=50
+[ "$*" ] && runs="$*"
 clear
 rst
 
@@ -35,7 +36,7 @@ INFO: run the loop $runs times.
 NOTICE: Please press any key
 NOTICE: to start the benchmark
 NOTICE: or 'Ctrl c' to quit."
-read -n 1 -s
+read -r -n 1 -s
 
 clear
 tput sc
@@ -64,8 +65,8 @@ EOM
 
 do_libsay_benchmark()
 {
-    debug=true
-    t=0
+    debug="true"
+    t="0"
     while [ "$t" -lt "$runs" ]; do
         tput rc
         say "$bench_text"
@@ -89,8 +90,8 @@ do_libsay_benchmark()
         draw bottomrightcorner
         t="$((t+1))"
         tp="$((t*100))"
-        p="$(expr $tp / $runs)"
-        bar="$(expr $p / 10)"
+        p="$((tp/runs))"
+        bar="$((p/10))"
         printf '\n\n%s' "Progress: |"
         printf "%0.s=" "$(seq 1 "$bar")"
         printf '%s' ">$p%"

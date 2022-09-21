@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# run_libsay_tests.sh - Version: 1.0-202209.21.180000
+# run_libsay_tests.sh - Version: 1.1-202209.21.180000
 # This script checks the functionality of the library.
 #
 # Author:       Megaf - https://github.com/Megaf - mmegaf [at] gmail [dot] com
@@ -19,6 +19,7 @@ leftside do_space do_space rightside do_space leftside do_space do_space do_spac
 leftside_c line line rightside_c do_space leftside_c line line do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space rightside do_godown \
 leftside do_space do_space rightside do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space do_space do_space leftside do_space do_space rightside do_godown \
 leftside do_space do_space rightside do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottom do_space bottomleftcorner bottom bottom bottomrightcorner do_godown
+unset -v border_colour
 rst
 
 say "TITLE: Welcome to libsay tests!"
@@ -66,7 +67,7 @@ schemes=(
 "c_debug" "c_notice" "c_title" "c_normal"
 )
 for predefined in "${schemes[@]}"; do
-    rst; $predefined; printf "Predefined scheme '$predefined'"; rst; printf "\n"
+    rst; $predefined; printf '%s' "Predefined scheme '$predefined'"; rst; printf "\n"
 done
 unset -v schemes predefined
 
@@ -92,7 +93,7 @@ done
 
 say "INFO: Testing background text colours with 'set_colour bg colour; printf':"
 for this_colour in "${colours[@]}"; do
-    rst; set_colour bg "$this_colour"; printf "Colour is: '$this_colour'"; rst; printf "\n"
+    rst; set_colour bg "$this_colour"; printf '%s' "Colour is: '$this_colour'"; rst; printf "\n"
 done
 
 say "INFO: Testing box border colour with 'border_colour=colour say':"
@@ -128,8 +129,7 @@ leftside do_space rightside do_space             do_space   leftside do_space do
 leftside_c line bottom_c toprightcorner          do_space   bottomleftcorner line top_c bottomrightcorner  do_space    leftside_c line line do_space do_godown \
 leftside do_space do_space rightside             do_space   do_space do_space column do_space              do_space    leftside do_space do_space do_space do_godown \
 bottomleftcorner bottom bottom bottomrightcorner do_space   do_space do_space column do_space              do_space    bottomleftcorner bottom bottom bottom do_godown
-rst
-
 unset -v border_colour
+rst
 
 exit 0
