@@ -349,17 +349,17 @@ say()
                 }
 
                 rst
-                [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
                 [ "$1" = "centre" -o "$1" = "center" ] && centre_text "$4" "$3" "$2" # Centres text.
                 [ "$1" = "left" ] || [ -z "$1" ] && align_text_left "$4" "$3" "$2" # Aligns to the left.
                 [ "$1" = "right" ] && align_text_right "$4" "$3" "$2" # Aligns to the right.
                 rst
-                [ ! "$text_line" ] && draw rightside_c do_godown || draw rightside do_godown # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
 
                 unset -v formatted border_space txt_size
             }
 
+            [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
             [ "$text_line" ] && write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
+            [ ! "$text_line" ] && draw rightside_c do_godown || draw rightside do_godown # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
         }
 
         # Only prints a line, if either the line doesn't contain debug of if debug is enabled.
