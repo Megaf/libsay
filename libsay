@@ -9,8 +9,6 @@
 # GitHub:       https://github.com/Megaf/libsay
 # License:      GPL V3
 
-# source libsay_draw_extensions.say # If included, adds a bunch of commands to draw letters and shapes.
-
 # Repeats arg1 n(arg2) times
 symbol_repeat()
 {
@@ -122,7 +120,7 @@ draw()
     )
 
     # Styles, parts array will be selected according the what's set in '$style'
-    # source libsay_extra_styles.say # If inclided, adds more border/line styles.
+    source styles/*.style.say
     # boxdoubleline
     [ "$style" = "boxdoubleline" ] && local parts=(
     ╔ ═ ╗
@@ -206,7 +204,7 @@ draw()
         done
     done
 
-    unset -v style prnt_args dynmc_cmd parts_cmds parts dynmc_cmds i_search_thing part_index
+    unset -v prnt_args dynmc_cmd parts_cmds parts dynmc_cmds i_search_thing part_index
     unset -f prnt do_linefill do_topfill do_bottomfill do_margin do_autofill do_space do_godown
 }
 
@@ -408,7 +406,7 @@ say()
     # Draws the bottom of the box
     set_border_colour; draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
 
-    unset -v msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight border_colour
+    unset -v style msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight border_colour
     unset -f text_in_a_box write_out apply_text_effect centre_text align_text_left align_text_right
 }
 
