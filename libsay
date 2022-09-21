@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 1.0-202209.21.180000
+# libsay - Version: 1.1-202209.21.180000
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -52,10 +52,10 @@ set_colour()
     "$chg_clr \e[97m"
     )
 
-    [ -z "$2" ] && [ "$1" != "fg" -o "$1" != "bg" ] && local clr_arg="$1" # Foreground/cackground arg not passed. Assuming foreground.
+    [ -z "$2" ] && [ "$1" != "fg" ] && [ "$1" != "bg" ] && local clr_arg="$1" # Foreground/cackground arg not passed. Assuming foreground.
 
     # Checks if the chosen colour is a valid one and then then sets the foreground/background colour.
-    for i_search_thing in ${!clrs[@]}; do
+    for i_search_thing in "${!clrs[@]}"; do
         if [[ "${clrs[$i_search_thing]}" == "$clr_arg" ]] && [ "$1" = "fg" ]; then
             ${clr_cmd_fg[$i_search_thing]}
             break
@@ -69,12 +69,7 @@ set_colour()
 }
 
 # Set the colour for the border.
-set_border_colour()
-{
-    if [ "$border_colour" ]; then
-        set_colour fg "$border_colour"
-    fi
-}
+set_border_colour() { rst; [ "$border_colour" ] && set_colour fg "$border_colour"; }
 
 # Turns text effects on (use rst to reset).
 underline_on() { printf "\e[4m"; } # Underlines text.
@@ -103,9 +98,8 @@ rst() { printf "\e[0m"; } # Resets all colour and formating  settings.
 # Draw function and commands. Used to "draw" borders and dynamic spaces, lines and margins.
 draw()
 {
-    [ ! "$style" ] && local style="boxdoubleline"
-    local prnt_args="%s" # Command args to use in the "print" command.
-    prnt() { rst; set_border_colour; printf "$prnt_args" "$*"; rst; } # "print" command the script uses. In theory it will be easy to use other things than "printf".
+    [ -z "$style" ] && local style="boxdoubleline"
+    prnt() { rst; set_border_colour; printf '%s' "$*"; rst; } # "print" command the script uses. In theory it will be easy to use other things than "printf".
     local dynmc_cmd="do_" # Set this string as a "dynamic command", instead of printing a symbol in the array, it will execute an action.
 
     # Array with valid options for draw command.
@@ -116,7 +110,7 @@ draw()
     bottomleftcorner bottom bottomrightcorner
     line bottom_c top_c
     junction
-    do_space do_godown do_save_pos do_go_pos
+    do_space do_godown
     do_linefill do_margin do_autofill
     do_topfill do_bottomfill
     )
@@ -175,12 +169,12 @@ draw()
     )
 
     # Dynamic draw commands.
-    do_linefill() { set_border_colour; symbol_repeat "${parts[11]}" "$linesize"; }
-    do_topfill() { set_border_colour; symbol_repeat "${parts[1]}" "$linesize"; }
-    do_bottomfill() { set_border_colour; symbol_repeat "${parts[9]}" "$linesize"; }
+    do_linefill() { rst; set_border_colour; symbol_repeat "${parts[11]}" "$linesize"; }
+    do_topfill() { rst; set_border_colour; symbol_repeat "${parts[1]}" "$linesize"; }
+    do_bottomfill() { rst; set_border_colour; symbol_repeat "${parts[9]}" "$linesize"; }
     do_autofill() { symbol_repeat " " "$border_space"; }
     do_margin() { symbol_repeat " " "$margin"; }
-    do_space() { printf "%0.s "; }
+    do_space() { printf " "; }
     do_godown() { printf "\n"; }
 
     # Array that contains the commands that are executed with "do_commands", like "do_margin"
@@ -191,7 +185,7 @@ draw()
     "0" "0" "0"
     "0" "0" "0"
     "0"
-    "do_space" "do_godown" "do_save_pos" "do_go_pos"
+    "do_space" "do_godown"
     "do_linefill" "do_margin" "do_autofill"
     "do_topfill" "do_bottomfill"
     )
@@ -221,6 +215,10 @@ draw()
 say()
 {
     unset msg
+    [ -z "$weight" ] && weight=""
+    [ -z "$border_colour" ] && border_colour=""
+    [ -z "$debug" ] && debug=""
+
     check_options()
     {
         [ "$1" = "colour_command" ] && local options=( --colour --color )
@@ -237,7 +235,7 @@ say()
 
     validade_command()
     {
-        for i_search_thing in "$*"; do
+        for i_search_thing in "$@"; do
             check_options colour_command "$1"
             if [ "$?" = 3 ]; then
                 check_options colour "$2"
@@ -259,7 +257,7 @@ say()
             fi
 
             check_options colour_command "$1"; colour_result="$?"
-            check_options alignment_command $1; align_result="$?"
+            check_options alignment_command "$1"; align_result="$?"
             if [ "$colour_result" = 0 ] && [ "$align_result" = 0 ]; then
                 if [[ "$1" == "--"* ]]; then
                     shift 1
@@ -284,7 +282,7 @@ say()
         local arguments=( "$@"  )
         for text_file in "${arguments[@]}"; do
             if [[ "$text_file" == *".txt" ]]; then
-                msg="$(cat $text_file)"
+                msg="$(cat "$text_file")"
                 unset -v text_file arguments
                 break
             fi
@@ -304,12 +302,13 @@ say()
             if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
                 local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
             fi
-       done <<< $msg
+       done <<< "$msg"
        printf "%s$line_length"
        unset -v line_content line_length
     }
 
-    local longest_line="$(find_longest_line)" # Length of the longest line in the text.
+    local longest_line
+    longest_line="$(find_longest_line)" # Length of the longest line in the text.
     unset -f find_longest_line
     local margin="0" # Default margin size between the side of the box and text.
     local spacesize="1" # Basically adjust the amount of space on both sides of the text to the box.
@@ -347,7 +346,7 @@ say()
                     c_title
                 else
                     set_colour fg "$1"
-                    [ "$weight" = "bold" -o "$2" = "bold" ] && bold_on
+                    [ "$weight" = "bold" ] || [ "$2" = "bold" ] && bold_on
                 fi
             }
 
@@ -388,7 +387,7 @@ say()
                 }
 
                 rst
-                [ "$1" = "centre" -o "$1" = "center" ] && centre_text "$4" "$3" "$2" # Centres text.
+                [ "$1" = "centre" ] || [ "$1" = "center" ] && centre_text "$4" "$3" "$2" # Centres text.
                 [ "$1" = "left" ] || [ -z "$1" ] && align_text_left "$4" "$3" "$2" # Aligns to the left.
                 [ "$1" = "right" ] && align_text_right "$4" "$3" "$2" # Aligns to the right.
                 rst
@@ -396,7 +395,9 @@ say()
                 unset -v border_space txt_size
             }
 
-            [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
+            # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
+            [ -z "$text_line" ] && draw leftside_c do_linefill
+            [ "$text_line" ] && draw leftside
             if [ "$text_line" ]; then
                 if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
                     local no_title_text_line="${text_line//TITLE: /}"
@@ -405,7 +406,9 @@ say()
                     write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
                 fi
             fi
-            [ ! "$text_line" ] && draw rightside_c do_godown || draw rightside do_godown # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
+            # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
+            [ -z "$text_line" ] && draw rightside_c do_godown
+            [ "$text_line" ] && draw rightside do_godown
         }
 
         # Only prints a line, if either the line doesn't contain debug of if debug is enabled.
@@ -415,7 +418,7 @@ say()
             text_in_a_box
         fi
 
-    done <<< $msg
+    done <<< "$msg"
 
     # Draws the bottom of the box
     draw bottomleftcorner do_bottomfill bottomrightcorner do_godown

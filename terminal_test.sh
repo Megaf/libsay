@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # libsay
-# terminal_test.sh - Version: 1.0-202209.21.180000
+# terminal_test.sh - Version: 1.1-202209.21.180000
 # See what your terminal can do.
 # This will show what your terminal is able to do with Escape Characters
 # for text effects and colours.
@@ -17,9 +17,8 @@ print_ascii_table()
     echo "Printing the ASCII table."
     print_ascii()
     {
-        character="$i"
-        command=`printf %x $i`
-        printf "%sASCII code $i: "; printf "'"; printf "\x$command"; printf "'\n"
+        command=$(printf %x "$i")
+        printf "%sASCII code $i: "; printf "'"; echo -n -e "\x$command"; printf "'\n"
     }
 
     for i in {32..126}; do
@@ -40,7 +39,7 @@ run_test()
     echo "Testing terminal's capabilities."
     print_test()
     {
-        printf "\e[0m\n"; printf "\e["$run_number"m"
+        printf "\e[0m\n"; echo -n -e "\e[""$run_number""m"
         printf "Text example."; printf "\e[0m\n"
         printf "\n"
     }
@@ -49,43 +48,43 @@ run_test()
     local run_number="0"
     printf "Testing text effects.\n"
     while [ "$run_number" -le "29" ]; do
-        printf "Effect number: $run_number"
+        printf '%s' "Effect number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
     printf "Testing normal foreground colours.\n"
     while [ "$run_number" -le "39" ]; do
-        printf "Colour number: $run_number"
+        printf '%s' "Colour number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
     printf "Testing normal background colours.\n"
     while [ "$run_number" -le "49" ]; do
-        printf "Colour number: $run_number"
+        printf '%s' "Colour number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
     printf "Testing aditional text effects.\n"
     while [ "$run_number" -le "89" ]; do
-        printf "Effect number: $run_number"
+        printf '%s' "Effect number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
     printf "Testing light foreground colours.\n"
     while [ "$run_number" -le "99" ]; do
-        printf "Colour number: $run_number"
+        printf '%s' "Colour number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
     printf "Testing light background colours.\n"
     while [ "$run_number" -le "109" ]; do
-        printf "Colour number: $run_number"
+        printf '%s' "Colour number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
     printf "Testing aditional extra effects.\n"
     while [ "$run_number" -le "$run_amount" ]; do
-        printf "Effect number: $run_number"
+        printf '%s' "Effect number: $run_number"
         print_test
         local run_number="$((++run_number))"
     done
