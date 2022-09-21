@@ -70,15 +70,33 @@ set_colour()
     unset -v clrs chg_clr clr_arg clr_cmd_bg clr_cmd_fg i_search_thing
 }
 
-# Turns text effects on.
-underline_on() { printf "\e[4m"; } # Turns mode on (use rst to reset).
-bold_on() {  printf "\e[1m"; } # Turns mode on (use rst to reset).
+# Set the colour for the border.
+set_border_colour()
+{
+    if [ "$border_colour" ]; then
+        set_colour fg "$border_colour"
+    fi
+}
+
+# Turns text effects on (use rst to reset).
+underline_on() { printf "\e[4m"; } # Underlines text.
+double_underline_on() { printf "\e[21m"; } # Underlines with double underline.
+overline_on() { printf "\e[53m"; } # Overlines text.
+overunder_on() { printf "\e[53m\e[4m"; } # Overlines and underlines the text.
+bold_on() {  printf "\e[1m"; } # Bold text.
+invert_on() { printf "\e[7m"; } # Swap background/foreground colours.
+blink_on() { printf "\e[6m"; } # Makes text blink.
+italics_on() { printf "\e[3m"; } # Text in italics.
+crossout_on() { printf "\e[9m"; } # Crossed out text.
+fade_on() { printf "\e[2m"; } # "Fades" text, makes it less intense.
 
 # Message type parse. Colour schemes for these types of message
-c_error() { set_colour bg black; set_colour fg red; } # Set for Error.
-c_info() { set_colour bg black; set_colour fg green; } # Set for Information.
-c_warning() { set_colour bg black; set_colour fg yellow; } # Set for Warning.
-c_debug() { set_colour bg black; set_colour fg cyan; } # Set for Debug.
+c_error() { rst; bold_on; underline_on; set_colour bg white; set_colour fg red; } # Set for Error.
+c_info() { rst; italics_on; set_colour bg black; set_colour fg green; } # Set for Information.
+c_warning() { rst; bold_on; set_colour bg black; set_colour fg light_yellow; } # Set for Warning.
+c_debug() { rst; set_colour bg black; set_colour fg cyan; } # Set for Debug.
+c_notice() { rst; set_colour bg white; set_colour fg black; } # Set for Notices/Notes.
+c_title() { rst; bold_on; double_underline_on; } # Set for Titles.
 
 # Resets the terminal to the default style.
 rst() { printf "\e[0m"; } # Resets all colour and formating  settings.
@@ -282,7 +300,7 @@ say()
     [ "$longest_line" -ge "$minimal_size" ] && local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
 
     # Draws the top of the box
-    draw topleftcorner do_topfill toprightcorner do_godown
+    set_border_colour; draw topleftcorner do_topfill toprightcorner do_godown
 
     # While loop that brakes the whole text in individual lines for processing and printing.
     while IFS= read -r text_line; do
@@ -295,17 +313,17 @@ say()
             {
                 # Checks if the line contain any of these works and apply colour code.
                 if [[ "$text_line" == "ERROR:"* ]] || [[ "$text_line" == "ERR:"* ]]; then
-                    underline_on; bold_on; set_colour fg red; set_colour bg white; local formatted="true"
+                    c_error
                 elif [[ "$text_line" == "INFO:"* ]]; then
-                    set_colour fg green; set_colour bg black; local formatted="true"
+                    c_info
                 elif [[ "$text_line" == "WARN:"* ]] || [[ "$text_line" == "WARNING:"* ]]; then
-                    bold_on; set_colour fg light_yellow; set_colour bg black; local formatted="true"
+                    c_warning
                 elif [[ "$text_line" == "DEBUG:"* ]] || [[ "$text_line" == "DBG:"* ]] || [[ "$text_line" == "ADV_DBG:"* ]]; then
-                    set_colour fg cyan; set_colour bg black; local formatted="true"
-                elif [[ "$text_line" == "NOTICE:"* ]]; then
-                    set_colour fg light_yellow; set_colour bg black; local formatted="true"
+                    c_debug
+                elif [[ "$text_line" == "NOTICE:"* ]] || [[ "$text_line" == "NOTE:"* ]]; then
+                    c_notice
                 elif [[ "$text_line" == "TITLE:"* ]]; then
-                    underline_on; bold_on; local formatted="true"
+                    c_title
                 else
                     set_colour fg "$1"
                     [ "$weight" = "bold" -o "$2" = "bold" ] && bold_on
@@ -354,11 +372,13 @@ say()
                 [ "$1" = "right" ] && align_text_right "$4" "$3" "$2" # Aligns to the right.
                 rst
 
-                unset -v formatted border_space txt_size
+                unset -v border_space txt_size
             }
 
+            set_border_colour
             [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
             [ "$text_line" ] && write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
+            set_border_colour
             [ ! "$text_line" ] && draw rightside_c do_godown || draw rightside do_godown # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
         }
 
@@ -372,9 +392,9 @@ say()
     done <<< $msg
 
     # Draws the bottom of the box
-    draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
+    set_border_colour; draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
 
-    unset -v msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight
+    unset -v msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight border_colour
     unset -f text_in_a_box write_out colorify centre_text align_text_left align_text_right
 }
 
