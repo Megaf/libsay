@@ -120,7 +120,8 @@ draw()
     )
 
     # Styles, parts array will be selected according the what's set in '$style'
-    source styles/*.style.say
+    # Uncomment line below to add custom styles.
+#    source styles/*.style.say
     # boxdoubleline
     [ "$style" = "boxdoubleline" ] && local parts=(
     ╔ ═ ╗
