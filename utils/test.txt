@@ -1,0 +1,10 @@
+TITLE: This is the title.
+
+INFO: This tests libsay.
+ERROR: Nothing went wrong!
+
+WARNING: About to finish.
+DEBUG: Debug if debug!
+This is a normal text.
+
+NOTICE: This is the end.
