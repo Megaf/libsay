@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# benchmark_libsay.sh - Version: 202209.21.153112
+# benchmark_libsay.sh - Version: 1.0-202209.21.180000
 # Simple libsay benchmark.
 #
 # Author: Megaf - https://github.com/Megaf/ - mmegaf [at] gmail [dot] com

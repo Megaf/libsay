@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# run_libsay_tests.sh - Version: 0.9-202209.21.173700
+# run_libsay_tests.sh - Version: 1.0-202209.21.180000
 # This script checks the functionality of the library.
 #
 # Author:       Megaf - https://github.com/Megaf - mmegaf [at] gmail [dot] com

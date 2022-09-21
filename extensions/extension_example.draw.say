@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# extension_example.draw.say - Version: 202209.21.153112
+# extension_example.draw.say - Version: 1.0-202209.21.180000
 # libsay library extension to add extra commands.
 #
 # Author:       Megaf - https://github.com/Megaf - mmegaf [at] gmail [dot] com

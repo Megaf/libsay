@@ -1,4 +1,4 @@
-# randomstar.style.say
+# randomstar.style.say Version: 1.0-202209.21.180000
 # An example for an addon style
 #
 # Author:       Megaf - https://github.com/Megaf - mmegaf [at] gmail [dot] com
@@ -10,10 +10,11 @@
 #
 # The array below represents the followin.
 # "top left corner" "top line" "top right corner"
-# "left side line" "right side line"
+# "left side line" "right side line" "column"
 # "left side connecting line" "right side connecting line"
 # "bottom left corner" "bottom line" "bottom right corner"
-# "vertically centrered line"
+# "vertically centrered line" "bottom side connecting" "top side connecting"
+# "junction"
 #
 # Example of text using the style below.
 # <==============>
@@ -26,8 +27,9 @@
 # randomstar
 [ "$style" = "randomstar" ] && local parts=(
 "<" "=" ">"
-"|" "|"
+"|" "|" "|"
 "»" "«"
 "@" "≡" "@"
-"~"
+"~" "#" "#"
+"o"
 )
