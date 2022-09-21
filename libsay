@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 202209.21.153112
+# libsay - Version: 0.9-202209.21.170800
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -105,7 +105,7 @@ draw()
 {
     [ ! "$style" ] && local style="boxdoubleline"
     local prnt_args="%s" # Command args to use in the "print" command.
-    prnt() { printf "$prnt_args" "$*"; } # "print" command the script uses. In theory it will be easy to use other things than "printf".
+    prnt() { rst; set_border_colour; printf "$prnt_args" "$*"; rst; } # "print" command the script uses. In theory it will be easy to use other things than "printf".
     local dynmc_cmd="do_" # Set this string as a "dynamic command", instead of printing a symbol in the array, it will execute an action.
 
     # Array with valid options for draw command.
@@ -168,9 +168,9 @@ draw()
     )
 
     # Dynamic draw commands.
-    do_linefill() { symbol_repeat "${parts[10]}" "$linesize"; }
-    do_topfill() { symbol_repeat "${parts[1]}" "$linesize"; }
-    do_bottomfill() { symbol_repeat "${parts[8]}" "$linesize"; }
+    do_linefill() { set_border_colour; symbol_repeat "${parts[10]}" "$linesize"; }
+    do_topfill() { set_border_colour; symbol_repeat "${parts[1]}" "$linesize"; }
+    do_bottomfill() { set_border_colour; symbol_repeat "${parts[8]}" "$linesize"; }
     do_autofill() { symbol_repeat " " "$border_space"; }
     do_margin() { symbol_repeat " " "$margin"; }
     do_space() { printf "%0.s "; }
@@ -275,11 +275,8 @@ say()
         msg="$(cat)"
     elif [[ "$*" == *".txt"* ]]; then
         local arguments=( "$@"  )
-        echo "Working with a text file."
         for text_file in "${arguments[@]}"; do
-            echo "args are: '${arguments[@]}'"
             if [[ "$text_file" == *".txt" ]]; then
-                echo "Found arg '$text_file' for text file."
                 msg="$(cat $text_file)"
                 unset -v text_file arguments
                 break
@@ -317,7 +314,7 @@ say()
     fi
 
     # Draws the top of the box
-    set_border_colour; draw topleftcorner do_topfill toprightcorner do_godown
+    draw topleftcorner do_topfill toprightcorner do_godown
 
     # While loop that brakes the whole text in individual lines for processing and printing.
     while IFS= read -r text_line; do
@@ -392,7 +389,6 @@ say()
                 unset -v border_space txt_size
             }
 
-            set_border_colour
             [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
             if [ "$text_line" ]; then
                 if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
@@ -402,7 +398,6 @@ say()
                     write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
                 fi
             fi
-            set_border_colour
             [ ! "$text_line" ] && draw rightside_c do_godown || draw rightside do_godown # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
         }
 
@@ -416,7 +411,7 @@ say()
     done <<< $msg
 
     # Draws the bottom of the box
-    set_border_colour; draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
+    draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
 
     unset -v style msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight border_colour
     unset -f text_in_a_box write_out apply_text_effect centre_text align_text_left align_text_right
