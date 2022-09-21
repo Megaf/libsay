@@ -386,7 +386,7 @@ say()
             if [ "$text_line" ]; then
                 if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
                     local no_title_text_line="${text_line//TITLE: /}"
-                    write_out "$align" "$weight" "$colour" "$no_title_text_line" # Formats and prints the line of text if the line is not empty.
+                    write_out "centre" "$weight" "$colour" "$no_title_text_line" # Formats and prints the line of text if the line is not empty.
                 else
                     write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
                 fi
