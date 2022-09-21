@@ -285,7 +285,7 @@ say()
         local line_content=""
         while IFS= read -r line_content; do # Reading line by line.
             if [[ "$line_content" == "TITLE:"* ]]; then # "Titles" Are printed without "TITLE: ", so remove it from the column count.
-                local line_content="${line_content:7}"
+                local line_content="${line_content//TITLE: /}"
             fi
             if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
                 local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
@@ -386,7 +386,7 @@ say()
             [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
             if [ "$text_line" ]; then
                 if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
-                    local no_title_text_line="${text_line:7}"
+                    local no_title_text_line="${text_line//TITLE: /}"
                     write_out "$align" "$weight" "$colour" "$no_title_text_line" # Formats and prints the line of text if the line is not empty.
                 else
                     write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
