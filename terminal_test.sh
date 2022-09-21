@@ -11,10 +11,33 @@
 # GitHub:       https://github.com/Megaf/libsay
 # License:      GPL V3
 
-# Test function
+# Prints the ASCII table.
+print_ascii_table()
+{
+    echo "Printing the ASCII table."
+    print_ascii()
+    {
+        character="$i"
+        command=`printf %x $i`
+        printf "%sASCII code $i: "; printf "'"; printf "\x$command"; printf "'\n"
+    }
+
+    for i in {32..126}; do
+        print_ascii "$i"
+    done
+    unset -v character command i
+
+    for i in {128..254}; do
+        print_ascii "$i"
+    done     
+    unset -v character command i
+    unset -f print_ascii
+}
+
+# Test terminals capabilities for text effects via Escape Characters.
 run_test()
 {
-    # Sets effect
+    echo "Testing terminal's capabilities."
     print_test()
     {
         printf "\e[0m\n"; printf "\e["$run_number"m"
@@ -67,10 +90,11 @@ run_test()
         local run_number="$((++run_number))"
     done
     unset -v run_amount run_number
+    unset -f print_test
 }
 
-run_test # Runs the test
-
-unset -f print_test run_test 
+run_test
+print_ascii_table
+unset -f run_test print_ascii_table
 
 exit 0
