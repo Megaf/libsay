@@ -97,6 +97,7 @@ c_warning() { rst; bold_on; set_colour bg black; set_colour fg light_yellow; } #
 c_debug() { rst; set_colour bg black; set_colour fg cyan; } # Set for Debug.
 c_notice() { rst; set_colour bg white; set_colour fg black; } # Set for Notices/Notes.
 c_title() { rst; bold_on; double_underline_on; } # Set for Titles.
+c_normal() { rst; } # Set for normal text.
 
 # Resets the terminal to the default style.
 rst() { printf "\e[0m"; } # Resets all colour and formating  settings.
@@ -281,14 +282,17 @@ say()
     find_longest_line()
     {
         local line_length="0"
-        local text_content=""
-        while IFS= read -r text_content; do # Reading line by line.
-            if [ "${#text_content}" -ge "$line_length" ]; then # Checks if line read is longest than the previous.
-                local line_length="${#text_content}" # If it is, get's the number of columns and set it to a variable.
+        local line_content=""
+        while IFS= read -r line_content; do # Reading line by line.
+            if [[ "$line_content" == "TITLE:"* ]]; then # "Titles" Are printed without "TITLE: ", so remove it from the column count.
+                local line_content="${line_content:7}"
             fi
-        done <<< $msg
+            if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
+                local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
+            fi
+       done <<< $msg
        printf "%s$line_length"
-       unset -v text_content line_length
+       unset -v line_content line_length
     }
 
     local longest_line="$(find_longest_line)" # Length of the longest line in the text.
@@ -296,8 +300,11 @@ say()
     local margin="1" # Default margin size between the side of the box and text.
     local spacesize="3" # Basically adjust the amount of space on both sides of the text to the box.
     local minimal_size="10" # Box will not be smaller than this, no matter how little the text is.
-    [ "$longest_line" -le "$minimal_size" ] && local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
-    [ "$longest_line" -ge "$minimal_size" ] && local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
+    if (( "$longest_line" <= "$minimal_size" )); then
+        local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
+    elif (( "$longest_line" > "$minimal_size" )); then
+        local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
+    fi
 
     # Draws the top of the box
     set_border_colour; draw topleftcorner do_topfill toprightcorner do_godown
@@ -309,7 +316,7 @@ say()
         text_in_a_box()
         {
             # Formats the text according to first keyword on each line
-            colorify()
+            apply_text_effect()
             {
                 # Checks if the line contain any of these works and apply colour code.
                 if [[ "$text_line" == "ERROR:"* ]] || [[ "$text_line" == "ERR:"* ]]; then
@@ -341,7 +348,7 @@ say()
                     # Calculates the space before and after the text so the text is centrered.
                     local space_left="$(((linesize/ 2)-(txt_size/2)))"; local space_right="$((linesize-(space_left+txt_size)))"
                     symbol_repeat " " "$space_left"
-                    colorify "$2" "$3"
+                    apply_text_effect "$2" "$3"
                     printf '%s' "$1"
                     rst
                     symbol_repeat " " "$space_right" # Adds empty space, print text and adds space.
@@ -351,7 +358,7 @@ say()
                 align_text_left()
                 {
                     draw do_margin
-                    colorify "$2" "$3"
+                    apply_text_effect "$2" "$3"
                     printf '%s' "$1"
                     rst
                     draw do_autofill
@@ -360,7 +367,7 @@ say()
                 align_text_right()
                 {
                     draw do_autofill
-                    colorify "$2" "$3"
+                    apply_text_effect "$2" "$3"
                     printf '%s' "$1"
                     rst
                     draw do_margin
@@ -377,7 +384,14 @@ say()
 
             set_border_colour
             [ ! "$text_line" ] && draw leftside_c do_linefill || draw leftside # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
-            [ "$text_line" ] && write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
+            if [ "$text_line" ]; then
+                if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
+                    local no_title_text_line="${text_line:7}"
+                    write_out "$align" "$weight" "$colour" "$no_title_text_line" # Formats and prints the line of text if the line is not empty.
+                else
+                    write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
+                fi
+            fi
             set_border_colour
             [ ! "$text_line" ] && draw rightside_c do_godown || draw rightside do_godown # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
         }
@@ -395,6 +409,6 @@ say()
     set_border_colour; draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
 
     unset -v msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight border_colour
-    unset -f text_in_a_box write_out colorify centre_text align_text_left align_text_right
+    unset -f text_in_a_box write_out apply_text_effect centre_text align_text_left align_text_right
 }
 
