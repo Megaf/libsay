@@ -188,20 +188,4 @@ esac
 unset -v start end total_time
 unset -f terminal_test ascii_test libsay_test help_menu start_timer end_timer
 
-start="$(date +%s.%3N)"
-say "INFO: Below running two empty 'say'."
-say ""
-say
-
-say "DEBUG: This is a single line Debug Message"
-
-say "TITLE: Multiline Message.
-
-INFO: The line below this one is a DEBUG one.
-DEBUG: Last line, DEBUG message."
-end="$(date +%s.%3N)"
-total_time="$(echo "scale=3; $end - $start" | bc)"
-say "INF: Total time to run the last test was "$total_time" seconds."
-unset -v start end total_time
-
 exit 0
