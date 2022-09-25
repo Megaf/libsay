@@ -73,17 +73,45 @@ set_border_colour() { rst; [ "$border_colour" ] && set_colour fg "$border_colour
 
 # Turns text effects on (use rst to reset).
 underline_on() { printf "\e[4m"; } # Underlines text.
+underline_off() { printf "\e[24m"; } # Disables (wavy)underline text.
 wavy_underline_on() { printf "\e[4:3m"; } # Underlines text with a squiggly underline.
 double_underline_on() { printf "\e[21m"; } # Underlines with double underline.
 overline_on() { printf "\e[53m"; } # Overlines text.
 overunder_on() { printf "\e[53m\e[4m"; } # Overlines and underlines the text.
 overuwavynder_on() { printf "\e[53m\e[4:3m"; } # Overlines and squiggly underlines the text.
+
 bold_on() {  printf "\e[1m"; } # Bold text.
-invert_on() { printf "\e[7m"; } # Swap background/foreground colours.
-blink_on() { printf "\e[6m"; } # Makes text blink.
-italics_on() { printf "\e[3m"; } # Text in italics.
-crossout_on() { printf "\e[9m"; } # Crossed out text.
+bold_off() { printf "\e[22m"; } # Turns bold and fade/dim text off.
 fade_on() { printf "\e[2m"; } # Dims text.
+fade_off() { printf "\e[22m"; } # Turns bold and fade/dim text off.
+
+invert_on() { printf "\e[7m"; } # Swap background/foreground colours.
+invert_off() { printf "\e[27m"; } # Swap back background/foreground colours.
+blink_on() { printf "\e[6m"; } # Makes text blink.
+blink_off() { printf "\e[25m"; } # Makes text stop blinking.
+
+italics_on() { printf "\e[3m"; } # Text in italics.
+italics_off() { printf "\e[23m"; } # Turns italics off.
+crossout_on() { printf "\e[9m"; } # Crossed out text.
+crossout_off() { printf "\e[29m"; } # Turns off crossed out text.
+
+fg_colour_off() { printf "\e[39m"; } # Set's foreground colour back to default.
+bg_colour_off() { printf "\e[49m"; } # Set's background colour back to default.
+
+# Text manipulation/cursor navigation.
+backspace() { printf "\b"; } # Deletes last character.
+tab() { printf "\t"; } # Inserts a tab.
+newline() { printf "\n"; } # Goes to the next line, "enter".
+v_tab() { printf "\v"; } # Adds a vertical tab.
+reset_line() { printf "\r"; } # Goes to the beginning of the line allows to add new text over the last text.
+clear_screen() { printf "\ec"; } # Clears the whole screen, similar to "clear".
+
+cursor_up() { printf "\e[1A"; } # Moves cursor one line up.
+cursor_down() { printf "\e[B"; } # Moves cursor one line down.
+cursor_right() { printf "\e[1C"; } # Moves cursor one column right.
+cursor_left() { printf "\e[1D"; } # Moves cursor one column left.
+save_pos() { printf "\e[s"; } # Save cursor's current position.
+restore_pos() { printf "\e[u"; } # Restore cursor's to saved position.
 
 # Message type parse. Colour schemes for these types of message
 c_error() { rst; bold_on; underline_on; set_colour bg white; set_colour fg red; } # Set for Error.
