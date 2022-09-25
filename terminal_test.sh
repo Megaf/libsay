@@ -12,10 +12,21 @@
 # License:      GPL V3
 # TODO: Add md5 to check if test succeeded.
 # Prints the ASCII table.
-start=""
-start="$(date +%s.%3N)"
 
-print_ascii_table()
+start_timer()
+{
+  start=""
+  start="$(date +%s.%3N)"
+}
+
+end_timer()
+{
+  end="$(date +%s.%3N)"
+  total_time="$(echo "scale=3; $end - $start" | bc)"
+  echo "It took $total_time seconds to run the tests."
+}
+
+ascii_test()
 {
     echo "Printing the ASCII table."
     print_ascii()
@@ -37,9 +48,10 @@ print_ascii_table()
 }
 
 # Test terminals capabilities for text effects via Escape Characters.
-run_test()
+terminal_test()
 {
     local run_amount run_number
+
     echo "Testing terminal's capabilities."
     print_test()
     {
@@ -50,42 +62,49 @@ run_test()
 
     run_amount="128" # Total number of "effects" to try.
     run_number="0"
+
     printf "Testing text effects.\n"
     while [ "$run_number" -le "29" ]; do
         printf '%s' "Effect number: $run_number"
         print_test
         run_number="$((++run_number))"
     done
+
     printf "Testing normal foreground colours.\n"
     while [ "$run_number" -le "39" ]; do
         printf '%s' "Colour number: $run_number"
         print_test
         run_number="$((++run_number))"
     done
+
     printf "Testing normal background colours.\n"
     while [ "$run_number" -le "49" ]; do
         printf '%s' "Colour number: $run_number"
         print_test
         run_number="$((++run_number))"
     done
+
     printf "Testing aditional text effects.\n"
     while [ "$run_number" -le "89" ]; do
         printf '%s' "Effect number: $run_number"
         print_test
         run_number="$((++run_number))"
     done
+
     printf "Testing light foreground colours.\n"
     while [ "$run_number" -le "99" ]; do
         printf '%s' "Colour number: $run_number"
         print_test
         run_number="$((++run_number))"
     done
+
     printf "Testing light background colours.\n"
     while [ "$run_number" -le "109" ]; do
         printf '%s' "Colour number: $run_number"
         print_test
         run_number="$((++run_number))"
     done
+
     printf "Testing aditional extra effects.\n"
     while [ "$run_number" -le "$run_amount" ]; do
         printf '%s' "Effect number: $run_number"
@@ -141,15 +160,32 @@ EOM
   rst; printf '%s' "                          faded - "; fade_on;              echo -e "This is a testing text.\n"; rst
 }
 
-run_test
-print_ascii_table
-libsay_test
+__all_tests() { terminal_test && ascii_test && libsay_test; }
 
-end="$(date +%s.%3N)"
-total_time="$(echo "scale=3; $end - $start" | bc)"
-say "INFO: Total time to run the last test was $total_time seconds."
+help_menu()
+{
+  echo "┌──────────────────────────────────────────────────────┐"
+  echo "| Please run './terminal_test test_name'.              |"
+  echo "| Where 'test name' is one of the following:           |"
+  echo "├─────────────────┬────────────────────────────────────┤"
+  echo "|    Test Name    |           Description              |"
+  echo "├─────────────────┼────────────────────────────────────┤"
+  echo "| 'terminal_test' | Tests your termina's capabilities. |"
+  echo "|    'ascii_test' | Prints the ASCII Table.            |"
+  echo "|   'libsay_test' | Tests the libsay library.          |"
+  echo "|           'all' | Runs all of the above.             |"
+  echo "└─────────────────┴────────────────────────────────────┘"
+}
+
+case "$*" in
+  terminal_test)  start_timer; terminal_test; end_timer  ;;
+     ascii_test)  start_timer;    ascii_test; end_timer  ;;
+    libsay_test)  start_timer;   libsay_test; end_timer  ;;
+            all)  start_timer;   __all_tests; end_timer  ;;
+              *)                              help_menu  ;;
+esac
 
 unset -v start end total_time
-unset -f run_test print_ascii_table libsay_test
+unset -f terminal_test ascii_test libsay_test help_menu start_timer end_timer
 
 exit 0
