@@ -100,8 +100,8 @@ run_test()
 libsay_test()
 {
   local test_message debug
-  # shellcheck source=./libsay
-  source ./libsay
+  # shellcheck source=/dev/null
+  source libsay
   say "TITLE: The following test uses libsays's functions."
   draw do_godown
   debug="false";
