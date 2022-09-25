@@ -73,15 +73,17 @@ set_border_colour() { rst; [ "$border_colour" ] && set_colour fg "$border_colour
 
 # Turns text effects on (use rst to reset).
 underline_on() { printf "\e[4m"; } # Underlines text.
+wavy_underline_on() { printf "\e[4:3m"; } # Underlines text with a squiggly underline.
 double_underline_on() { printf "\e[21m"; } # Underlines with double underline.
 overline_on() { printf "\e[53m"; } # Overlines text.
 overunder_on() { printf "\e[53m\e[4m"; } # Overlines and underlines the text.
+overuwavynder_on() { printf "\e[53m\e[4:3m"; } # Overlines and squiggly underlines the text.
 bold_on() {  printf "\e[1m"; } # Bold text.
 invert_on() { printf "\e[7m"; } # Swap background/foreground colours.
 blink_on() { printf "\e[6m"; } # Makes text blink.
 italics_on() { printf "\e[3m"; } # Text in italics.
 crossout_on() { printf "\e[9m"; } # Crossed out text.
-fade_on() { printf "\e[2m"; } # "Fades" text, makes it less intense.
+fade_on() { printf "\e[2m"; } # Dims text.
 
 # Message type parse. Colour schemes for these types of message
 c_error() { rst; bold_on; underline_on; set_colour bg white; set_colour fg red; } # Set for Error.
@@ -117,7 +119,8 @@ draw()
 
     # Styles, parts array will be selected according the what's set in '$style'
     # Uncomment line below to add custom styles.
-#    source styles/*.style.say
+    # source styles/*.style.say
+
     # boxdoubleline
     [ "$style" = "boxdoubleline" ] && local parts=(
     ╔ ═ ╗
@@ -223,7 +226,7 @@ say()
     {
         [ "$1" = "colour_command" ] && local options=( --colour --color )
         [ "$1" = "alignment_command" ] && local options=( --align )
-        [ "$1" = "colour" ] && local options=( black red green yellow blue magenta cyan white 
+        [ "$1" = "colour" ] && local options=( black red green yellow blue magenta cyan white
         grey light_red light_green light_yellow light_blue light_magenta light_cyan bright_white )
         [ "$1" = "alignment" ] && local options=( centre center left right )
 
@@ -444,4 +447,3 @@ say()
     unset -f text_in_a_box write_out apply_text_effect centre_text align_text_left align_text_right
     return 0
 }
-
