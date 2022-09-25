@@ -6,14 +6,13 @@
 # GitHub:       https://github.com/Megaf/libsay
 # License:      GPL V3
 #
-# To create your own style. Replace "randomstar" with a style name of your choice.
 #
-# The array below represents the followin.
+# The array below represents the following.
 # "top left corner" "top line" "top right corner"
 # "left side line" "right side line" "column"
 # "left side connecting line" "right side connecting line"
 # "bottom left corner" "bottom line" "bottom right corner"
-# "vertically centrered line" "bottom side connecting" "top side connecting"
+# "vertically centred line" "bottom side connecting" "top side connecting"
 # "junction"
 #
 # Example of text using the style below.
