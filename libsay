@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 1.1-202209.22.150000
+# libsay - Version: 1.2-202209.26.180000
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
