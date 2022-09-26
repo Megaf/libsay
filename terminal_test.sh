@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # libsay
-# terminal_test.sh - Version: 1.1-202209.21.180000
+# terminal_test.sh - Version: 1.2-202209.26.180000
 # See what your terminal can do.
 # This will show what your terminal is able to do with Escape Characters
 # for text effects and colours.
