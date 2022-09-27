@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 1.2-202209.26.180000
+# libsay - Version: 1.2-202209.27.153000
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -33,8 +33,10 @@ set_colour()
     bright_white
     )
 
+    [ -z "$*" ] && echo "${clrs[@]}" && return 0
+
     local chg_clr="printf" # Colour command to be used.
-    local clr_arg="$2"
+    local clr_arg="$2" # Colour choice is the second argument.
 
     # Commands to set background colour.
     local clr_cmd_bg=(
@@ -52,7 +54,7 @@ set_colour()
     "$chg_clr \e[97m"
     )
 
-    [ -z "$2" ] && [ "$1" != "fg" ] && [ "$1" != "bg" ] && local clr_arg="$1" # Foreground/cackground arg not passed. Assuming foreground.
+    [ -z "$2" ] && [ "$1" != "fg" ] && [ "$1" != "bg" ] && local clr_arg="$1" # Foreground/background arg not passed. Assuming foreground.
 
     # Checks if the chosen colour is a valid one and then then sets the foreground/background colour.
     for i_search_thing in "${!clrs[@]}"; do
@@ -245,81 +247,44 @@ draw()
 
 say()
 {
+    [ -t 0 ] && [ -z "$*" ] && return 0 # If nothing is given to say from stdin nor as an argument, then exit.
     unset -v msg
     [ -z "$weight" ] && weight=""
     [ -z "$border_colour" ] && border_colour=""
     [ -z "$debug" ] && debug=""
 
-    check_options()
-    {
-        [ "$1" = "colour_command" ] && local options=( --colour --color )
-        [ "$1" = "alignment_command" ] && local options=( --align )
-        [ "$1" = "colour" ] && local options=( black red green yellow blue magenta cyan white
-        grey light_red light_green light_yellow light_blue light_magenta light_cyan bright_white )
-        [ "$1" = "alignment" ] && local options=( centre center left right )
+    local valid_aligns="left right centre center"
+    # Parse the command line arguments to get text alignment and colour. And then validates the colour.
+    local opt # Variable representing user's input, to parse options
+    for opt in "$@"; do # Walks through all arguments and removes them from "$@" if they are valid.
+      [[ "$opt" == "--colour" || "$opt" == "--color" || "$opt" == "-c" ]] && colour="$2" && shift 2
+      [[ "$opt" == "--colour="* || "$opt" == "--color="* || "$opt" == "-c="* ]] && colour="${opt#*=}" && shift 1
+      [[ "$opt" = "--align" || "$opt" = "-a" ]] && align="$2" && shift 2
+      [[ "$opt" = "--align="* || "$opt" = "-a="* ]] && align="${opt#*=}" && shift 1
+    done
+    unset -v opt
+    [[ ! "$(set_colour)" =~ $colour ]] && echo "Can't reconise colour '$colour'" && unset -v colour align && return 1
+    [[ ! "$valid_aligns" =~ $align ]] && echo "'$align' is an invalid alignment" && unset -v colour align && return 1
+    unset -v valid_aligns
 
-        for i_search_thing in "${options[@]}"; do
-            [ "$i_search_thing" = "$2" ] && return 3
-        done
-        unset -v options
-    }
-
-    validade_command()
-    {
-        for i_search_thing in "$@"; do
-            check_options colour_command "$1"
-            if [ "$?" = 3 ]; then
-                check_options colour "$2"
-                if [ "$?" = 3 ]; then
-                    colour="$2"; shift 2
-                else
-                    shift 2
-                fi
-            fi
-
-            check_options alignment_command "$1"
-            if [ "$?" = 3 ]; then
-                check_options alignment "$2"
-                if [ "$?" = 3 ]; then
-                    align="$2"; shift 2
-                else
-                    shift 2
-                fi
-            fi
-
-            check_options colour_command "$1"; colour_result="$?"
-            check_options alignment_command "$1"; align_result="$?"
-            if [ "$colour_result" = 0 ] && [ "$align_result" = 0 ]; then
-                if [[ "$1" == "--"* ]]; then
-                    shift 1
-                fi
-            fi
-
-            # If no command line arg was passed and the user doesn't want to open a txt file...
-            if [[ ! "$1" == "--"* ]] && [[ ! "$1" == *".txt" ]]; then
-                msg="$*" # ...Then grabs the whole input line as the text to use.
-            fi
-        done
-        unset args
-    }
-
-    local args=( "$@" )
-    validade_command "${args[@]}"
-
-    # Checks if input is coming from the standard input.
-    if [ ! -t 0 ]; then
-        msg="$(cat)"
-    elif [[ "$*" == *".txt"* ]]; then
-        local arguments=( "$@"  )
-        for text_file in "${arguments[@]}"; do
+    if [ ! -t 0 ]; then # Checks if input is coming from the standard input.
+      [ -z "$*" ] && msg="$(cat)" # If only stdin and no command line arg. Then with command line arg.
+      [ -n "$*" ] && msg="$(cat)
+$*"
+    elif [[ "$*" == *".txt" ]]; then # Checks if input is a text file.
+        for text_file in "$@"; do
             if [[ "$text_file" == *".txt" ]]; then
                 msg="$(cat "$text_file")"
-                unset -v text_file arguments
+                unset -v text_file
                 break
             fi
         done
-        unset -v text_file arguments
+        unset -v text_file
+    else
+      msg="$*"
     fi
+
+    [ -z "$msg" ] && return 0 # If there's nothing for say to print, then exit.
 
     do_work()
     {
