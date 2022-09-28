@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 1.2-202209.28.171000
+# libsay - Version: 1.3-202209.28.193000
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -277,20 +277,20 @@ newline
 
   # 'for loop' to check if the required symbol is a static or a dynamic symbol.
   for i_search_thing in "$@"; do # Goes through all items in the command.
-      local part_index="0"
-      for n_part_cmd in "${parts_cmds[@]}"; do
-          if [ ! "$n_part_cmd" = "$i_search_thing" ]; then
-              part_index="$((++part_index))"
-          elif [ "$n_part_cmd" = "$i_search_thing" ]; then
-              if [[ "${parts_cmds[$part_index]}" == "$dynmc_cmd"*  ]]; then
-                  "${dynmc_cmds[$part_index]}"
-              else
-                  prnt "${parts[$part_index]}"
-              fi
-              unset part_index
-              break
-          fi
-      done
+    local part_index="0"
+    for n_part_cmd in "${parts_cmds[@]}"; do
+      if [ ! "$n_part_cmd" = "$i_search_thing" ]; then
+        part_index="$((++part_index))"
+      elif [ "$n_part_cmd" = "$i_search_thing" ]; then
+        if [[ "${parts_cmds[$part_index]}" == "$dynmc_cmd"*  ]]; then
+          "${dynmc_cmds[$part_index]}"
+        else
+          prnt "${parts[$part_index]}"
+        fi
+        unset part_index
+        break
+      fi
+    done
   done
 
   unset -v prnt_args dynmc_cmd parts_cmds parts dynmc_cmds i_search_thing part_index built_in_styles
@@ -299,7 +299,7 @@ newline
 
 say()
 {
-  # Short helop commands.
+  # Short help commands.
   local text_example colour bg_colour
   read -r -d '' text_example << EOM
 Just a normal piece of text.
@@ -403,14 +403,14 @@ EOM
     [ -n "$*" ] && msg="$(cat)
 $*"
   elif [[ "$*" == *".txt" ]]; then # Checks if input is a text file.
-      for text_file in "$@"; do
-          if [[ "$text_file" == *".txt" ]]; then
-              msg="$(cat "$text_file")"
-              unset -v text_file
-              break
-          fi
-      done
-      unset -v text_file
+    for text_file in "$@"; do
+      if [[ "$text_file" == *".txt" ]]; then
+        msg="$(cat "$text_file")"
+        unset -v text_file
+        break
+      fi
+    done
+    unset -v text_file
   else
     msg="$*"
   fi
@@ -425,12 +425,12 @@ $*"
     local line_length="0"
     local line_content=""
     while IFS= read -r line_content; do # Reading line by line.
-      if [[ "$line_content" == "TITLE:"* ]]; then # "Titles" Are printed without "TITLE: ", so remove it from the column count.
-          local line_content="${line_content//TITLE: /}"
-      fi
-      if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
-          local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
-      fi
+    if [[ "$line_content" == "TITLE:"* ]]; then # "Titles" Are printed without "TITLE: ", so remove it from the column count.
+      local line_content="${line_content//TITLE: /}"
+    fi
+    if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
+      local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
+    fi
    done <<< "$msg"
    printf "%s$line_length"
    unset -v line_content line_length
@@ -444,13 +444,15 @@ $*"
   local spacesize="1" # Basically adjust the amount of space on both sides of the text to the box.
   [ -z "$minimal_size" ] && local minimal_size="10" # Box will not be smaller than this, no matter how little the text is.
   if (( "$longest_line" <= "$minimal_size" )); then
-      local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
+    local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
   elif (( "$longest_line" > "$minimal_size" )); then
-      local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
+    local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
   fi
 
-  # Draws the top of the box
-  draw topleftcorner do_topfill toprightcorner do_godown
+  draw_top_line() { draw topleftcorner do_topfill toprightcorner do_godown; } # Makes the top part of the box.
+  draw_bottom_line() { draw bottomleftcorner do_bottomfill bottomrightcorner do_godown; } # Makes the bottom part of the box.
+
+  draw_top_line # Draps the top part of the box.
 
   # While loop that brakes the whole text in individual lines for processing and printing.
   while IFS= read -r text_line; do
@@ -461,27 +463,27 @@ $*"
       # Formats the text according to first keyword on each line
       apply_text_effect()
       {
-          # Checks if the line contain any of these works and apply colour code.
-          if [[ "$text_line" == "ERROR:"* ]] || [[ "$text_line" == "ERR:"* ]]; then
-              c_error
-          elif [[ "$text_line" == "INFO:"* ]]; then
-              c_info
-          elif [[ "$text_line" == "WARN:"* ]] || [[ "$text_line" == "WARNING:"* ]]; then
-              c_warning
-          elif [[ "$text_line" == "DEBUG:"* ]] || [[ "$text_line" == "DBG:"* ]] || [[ "$text_line" == "ADV_DBG:"* ]]; then
-              c_debug
-          elif [[ "$text_line" == "NOTICE:"* ]] || [[ "$text_line" == "NOTE:"* ]]; then
-              c_notice
-          elif [[ "$text_line" == "TITLE:"* ]]; then
-              c_title
-          else
-              set_colour fg "$1"
-              set_colour bg "$3"
-              [ "$weight" = "bold" ] || [ "$2" = "bold" ] && bold_on
-              [[ "$weight" == "light" || "$weight" == "faded" || "$weight" == "dim" ]] && fade_on
-              [[ "$2" == "light" || "$2" == "faded" || "$2" == "dim" ]] && fade_on
-              [ "$weight" = "normal" ] || [ "$2" = "normal" ] && bold_off
-          fi
+        # Checks if the line contain any of these works and apply colour code.
+        if [[ "$text_line" == "ERROR:"* || "$text_line" == "ERR:"* ]]; then
+          c_error
+        elif [[ "$text_line" == "INFO:"* ]]; then
+          c_info
+        elif [[ "$text_line" == "WARN:"* || "$text_line" == "WARNING:"* ]]; then
+          c_warning
+        elif [[ "$text_line" == "DEBUG:"* || "$text_line" == "DBG:"* || "$text_line" == "ADV_DBG:"* ]]; then
+          c_debug
+        elif [[ "$text_line" == "NOTICE:"* || "$text_line" == "NOTE:"* ]]; then
+          c_notice
+        elif [[ "$text_line" == "TITLE:"* ]]; then
+          c_title
+        else
+          set_colour fg "$1"
+          set_colour bg "$3"
+          [ "$weight" = "bold" ] || [ "$2" = "bold" ] && bold_on
+          [[ "$weight" == "light" || "$weight" == "faded" || "$weight" == "dim" ]] && fade_on
+          [[ "$2" == "light" || "$2" == "faded" || "$2" == "dim" ]] && fade_on
+          [ "$weight" = "normal" ] || [ "$2" = "normal" ] && bold_off
+        fi
       }
 
       # Final loop, calculates the line and spaces size and then prints the line.
@@ -547,28 +549,27 @@ $*"
 
     # Only prints a line, if either the line doesn't contain debug of if debug is enabled.
     if [ ! "$debug" = "true" ] && [[ ! "$text_line" == "DEBUG:"* ]]; then
-        text_in_a_box
+      text_in_a_box
     elif [ "$debug" = "true" ]; then
-        text_in_a_box
+      text_in_a_box
     fi
 
   done <<< "$msg"
 
-  # Draws the bottom of the box
-  draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
+draw_bottom_line # Draws the bootom part of the box.
   }
 
   # Only run "do_work" if text/string is not empty and if string doesn't "contain DEBUG" or "debug=true".
   if [ ! -d "$msg" ] && [ ! "$msg" = "" ]; then
-      if [ ! "$debug" = "true" ] && [[ ! "$msg" == "DEBUG:"* ]]; then
-          do_work
-      elif [ "$debug" = "true" ]; then
-          do_work
-      else
-          return 0
-      fi
-  else
+    if [ ! "$debug" = "true" ] && [[ ! "$msg" == "DEBUG:"* ]]; then
+      do_work
+    elif [ "$debug" = "true" ]; then
+      do_work
+    else
       return 0
+    fi
+  else
+    return 0
   fi
 
   unset -v style msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize

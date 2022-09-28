@@ -1,4 +1,4 @@
-`COMMANDS.md - version 1.2-202209.28.171000`
+`COMMANDS.md - version 1.3-202209.28.193000`
 # libsay
 
 This is a brief overview of the commands available in the `libsay` library.
