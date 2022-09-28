@@ -56,15 +56,33 @@ Commands that will apply effects to text.
 |Command              |Argument       |Description                                                       |Example                                    |
 |---------------------|---------------|------------------------------------------------------------------|-------------------------------------------|
 |`underline_on`       |none           |Underlines text after the command.                                |`underline_on; echo "Hello There!"`        |
+|`wavy_underline_on`  |none           |Underlines text with a squiggly underline after the command.      |`wavy_underline_on; echo "Squiggly!"`      |
 |`double_underline_on`|none           |Same as above, but with a double line instead.                    |`double_underline_on; echo "Greetings"`    |
 |`overline_on`        |none           |Adds a line above the text, underline but overline.               |`overline_on; echo "I'm overlined."`       |
-|`overunder_on`       |none           |Adds an underline and a overline.                                 |`overunder_on; echo "Above and below"`     |
+|`overunder_on`       |none           |Adds an underline and an overline.                                |`overunder_on; echo "Above and below"`     |
+|`overuwavynder_on`   |none           |Adds a squiggly underline and an overline.                        |`overuwavynder_on; echo "Above and wavy"`  |
 |`bold_on`            |none           |Prints the text in bold.                                          |`bold_on; echo "hi"`/`weight=bold say "hi"`|
 |`invert_on`          |none           |Makes the background colour the foreground and vice versa.        |`invert_on; echo "Hello Inverted There!"`  |
 |`blink_on`           |none           |Makes text blink.                                                 |`blink_on; echo "I'm a blinking text"`     |
 |`italics_on`         |none           |Writes the text in Italics.                                       |`italics_on; echo "e l e g a n t  t e x t"`|
 |`crossout_on`        |none           |Strikes-through text.                                             |`crossout_on; echo "A mistake perhaps."`   |
 |`fade_on`            |none           |Makes the text less intense.                                      |`fade_on; echo "Not a very bright string."`|
+
+### Turning text effects off individually.
+
+Some text effect can be individually turned off.
+
+|Command              |Argument       |Description                                                       |Example                                    |
+|---------------------|---------------|------------------------------------------------------------------|-------------------------------------------|
+|`underline_off`      |none           |Disables wavy/squiggly and (double)underline.                     |`underline_off; echo "Underline disabled"` |
+|`bold_off`           |none           |Disables bold text and faded/dim.                                 |`bold_off; echo "Text in normal weight."`  |
+|`fade_off`           |none           |Disabled faded/dim and bold text.                                 |`fade_off; echo "Text in normal weight."`  |
+|`invert_off`         |none           |Disables inverted text.                                           |`invert_off; echo "Colours not inverted"`  |
+|`blink_off`          |none           |Disables blinking text effect.                                    |`blink_off; echo "Static text"`            |
+|`italics_off`        |none           |Disables italics text.                                            |`italics_off; echo "Text not in italics"`  |
+|`crossout_off`       |none           |Disables strike-through/cross-out text.                           |`crossout_off; echo "Free text."`          |
+|`fg_colour_off`      |none           |Sets text colour to terminals default.                            |`fg_colour_off; echo "Default colour."`    |
+|`bg_colour_off`      |none           |Sets text background colour to terminals default.                 |`bg_colour_off; echo "Default colour."`    |
 
 ## Default Styles
 
