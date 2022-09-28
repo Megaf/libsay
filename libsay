@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 1.2-202209.27.153000
+# libsay - Version: 1.2-202209.28.171000
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -12,62 +12,62 @@
 # Repeats arg1 n(arg2) times
 symbol_repeat()
 {
-    local repeat_count="0"
-    local repeat_times="$2"
-    local symbol="$1"
-    while [ "$repeat_count" -lt "$repeat_times" ]; do
-        printf '%s' "$symbol"
-        local repeat_count="$((++repeat_count))"
-    done
-    unset -v repeat_count repeat_times symbol
+  local repeat_count="0"
+  local repeat_times="$2"
+  local symbol="$1"
+  while [ "$repeat_count" -lt "$repeat_times" ]; do
+      printf '%s' "$symbol"
+      local repeat_count="$((++repeat_count))"
+  done
+  unset -v repeat_count repeat_times symbol
 }
 
 # Sets the text foreground and background colour.
 set_colour()
 {
-    # Available colour names.
-    local clrs=(
-    black red green yellow blue magenta cyan
-    white grey
-    light_red light_green light_yellow light_blue light_magenta light_cyan
-    bright_white
-    )
+  # Available colour names.
+  local clrs=(
+  black red green yellow blue magenta cyan
+  white grey
+  light_red light_green light_yellow light_blue light_magenta light_cyan
+  bright_white
+  )
 
-    [ -z "$*" ] && echo "${clrs[@]}" && return 0
+  [ -z "$*" ] && echo "${clrs[@]}" && return 0
 
-    local chg_clr="printf" # Colour command to be used.
-    local clr_arg="$2" # Colour choice is the second argument.
+  local chg_clr="printf" # Colour command to be used.
+  local clr_arg="$2" # Colour choice is the second argument.
 
-    # Commands to set background colour.
-    local clr_cmd_bg=(
-    "$chg_clr \e[40m" "$chg_clr \e[41m" "$chg_clr \e[42m" "$chg_clr \e[43m" "$chg_clr \e[44m" "$chg_clr \e[45m" "$chg_clr \e[46m"
-    "$chg_clr \e[47m" "$chg_clr \e[100m"
-    "$chg_clr \e[101m" "$chg_clr \e[102m" "$chg_clr \e[103m" "$chg_clr \e[104m" "$chg_clr \e[105m" "$chg_clr \e[106m"
-    "$chg_clr \e[107m"
-    )
+  # Commands to set background colour.
+  local clr_cmd_bg=(
+  "$chg_clr \e[40m" "$chg_clr \e[41m" "$chg_clr \e[42m" "$chg_clr \e[43m" "$chg_clr \e[44m" "$chg_clr \e[45m" "$chg_clr \e[46m"
+  "$chg_clr \e[47m" "$chg_clr \e[100m"
+  "$chg_clr \e[101m" "$chg_clr \e[102m" "$chg_clr \e[103m" "$chg_clr \e[104m" "$chg_clr \e[105m" "$chg_clr \e[106m"
+  "$chg_clr \e[107m"
+  )
 
-    # Commands to set foreground colour.
-    local clr_cmd_fg=(
-    "$chg_clr \e[30m" "$chg_clr \e[31m" "$chg_clr \e[32m" "$chg_clr \e[33m" "$chg_clr \e[34m" "$chg_clr \e[35m" "$chg_clr \e[36m"
-    "$chg_clr \e[37m" "$chg_clr \e[90m"
-    "$chg_clr \e[91m" "$chg_clr \e[92m" "$chg_clr \e[93m" "$chg_clr \e[94m" "$chg_clr \e[95m" "$chg_clr \e[96m"
-    "$chg_clr \e[97m"
-    )
+  # Commands to set foreground colour.
+  local clr_cmd_fg=(
+  "$chg_clr \e[30m" "$chg_clr \e[31m" "$chg_clr \e[32m" "$chg_clr \e[33m" "$chg_clr \e[34m" "$chg_clr \e[35m" "$chg_clr \e[36m"
+  "$chg_clr \e[37m" "$chg_clr \e[90m"
+  "$chg_clr \e[91m" "$chg_clr \e[92m" "$chg_clr \e[93m" "$chg_clr \e[94m" "$chg_clr \e[95m" "$chg_clr \e[96m"
+  "$chg_clr \e[97m"
+  )
 
-    [ -z "$2" ] && [ "$1" != "fg" ] && [ "$1" != "bg" ] && local clr_arg="$1" # Foreground/background arg not passed. Assuming foreground.
+  [ -z "$2" ] && [ "$1" != "fg" ] && [ "$1" != "bg" ] && local clr_arg="$1" # Foreground/background arg not passed. Assuming foreground.
 
-    # Checks if the chosen colour is a valid one and then then sets the foreground/background colour.
-    for i_search_thing in "${!clrs[@]}"; do
-        if [[ "${clrs[$i_search_thing]}" == "$clr_arg" ]] && [ "$1" = "fg" ]; then
-            ${clr_cmd_fg[$i_search_thing]}
-            break
-        elif [[ "${clrs[$i_search_thing]}" == "$clr_arg" ]] && [ "$1" = "bg" ]; then
-            ${clr_cmd_bg[$i_search_thing]}
-            break
-        fi
-    done
+  # Checks if the chosen colour is a valid one and then then sets the foreground/background colour.
+  for i_search_thing in "${!clrs[@]}"; do
+      if [[ "${clrs[$i_search_thing]}" == "$clr_arg" ]] && [ "$1" = "fg" ]; then
+          ${clr_cmd_fg[$i_search_thing]}
+          break
+      elif [[ "${clrs[$i_search_thing]}" == "$clr_arg" ]] && [ "$1" = "bg" ]; then
+          ${clr_cmd_bg[$i_search_thing]}
+          break
+      fi
+  done
 
-    unset -v clrs chg_clr clr_arg clr_cmd_bg clr_cmd_fg i_search_thing
+  unset -v clrs chg_clr clr_arg clr_cmd_bg clr_cmd_fg i_search_thing
 }
 
 # Set the colour for the border.
@@ -130,313 +130,449 @@ rst() { printf "\e[0m"; } # Resets all colour and formating  settings.
 # Draw function and commands. Used to "draw" borders and dynamic spaces, lines and margins.
 draw()
 {
-    [ -z "$style" ] && local style="boxdoubleline"
-    prnt() { rst; set_border_colour; printf '%s' "$*"; rst; } # "print" command the script uses. In theory it will be easy to use other things than "printf".
-    local dynmc_cmd="do_" # Set this string as a "dynamic command", instead of printing a symbol in the array, it will execute an action.
+  local built_in_styles="boxdoubleline boxverticalsinglehorizontaldouble boxverticaldoublehorizontalsingle boxsingleline boxsolid"
+  [ "$*" = "show_styles" ] && echo "$built_in_styles" && return 0
 
-    # Array with valid options for draw command.
-    local parts_cmds=(
-    topleftcorner top toprightcorner
-    leftside rightside column
-    leftside_c rightside_c
-    bottomleftcorner bottom bottomrightcorner
-    line bottom_c top_c
-    junction
-    do_space do_godown
-    do_linefill do_margin do_autofill
-    do_topfill do_bottomfill
-    )
+  [ -z "$style" ] && local style="boxdoubleline"
+  prnt() { rst; set_border_colour; printf '%s' "$*"; rst; } # "print" command the script uses. In theory it will be easy to use other things than "printf".
+  local dynmc_cmd="do_" # Set this string as a "dynamic command", instead of printing a symbol in the array, it will execute an action.
 
-    # Styles, parts array will be selected according the what's set in '$style'
-    # Uncomment line below to add custom styles.
-    # source styles/*.style.say
+  # Array with valid options for draw command.
+  local parts_cmds=(
+  topleftcorner top toprightcorner
+  leftside rightside column
+  leftside_c rightside_c
+  bottomleftcorner bottom bottomrightcorner
+  line bottom_c top_c
+  junction
+  do_space do_godown
+  do_linefill do_margin do_autofill
+  do_topfill do_bottomfill
+  )
 
-    # boxdoubleline
-    [ "$style" = "boxdoubleline" ] && local parts=(
-    ╔ ═ ╗
-    ║ ║ ║
-    ╠ ╣
-    ╚ ═ ╝
-    ═ ╩ ╦
-    ╬
-    )
+  # Styles, parts array will be selected according the what's set in '$style'
+  # Uncomment line below to add custom styles.
+  # source styles/*.style.say
 
-    # boxverticalsinglehorizontaldouble
-    [ "$style" = "boxverticalsinglehorizontaldouble" ] && local parts=(
-    ╒ ═ ╕
-    │ │ ║
-    ├ ┤
-    ╘ ═ ╛
-    ─ ╩ ╦
-    ┼
-    )
+  # boxdoubleline
+  [ "$style" = "boxdoubleline" ] && local parts=(
+  ╔ ═ ╗
+  ║ ║ ║
+  ╠ ╣
+  ╚ ═ ╝
+  ═ ╩ ╦
+  ╬
+  )
 
-    # boxverticaldoublehorizontalsingle
-    [ "$style" = "boxverticaldoublehorizontalsingle" ] && local parts=(
-    ╓ ─ ╖
-    ║ ║ │
-    ╠ ╣
-    ╙ ─ ╜
-    ─ ┴ ┬
-    ┼
-    )
+  # boxverticalsinglehorizontaldouble
+  [ "$style" = "boxverticalsinglehorizontaldouble" ] && local parts=(
+  ╒ ═ ╕
+  │ │ ║
+  ├ ┤
+  ╘ ═ ╛
+  ─ ╩ ╦
+  ┼
+  )
 
-    # boxsingleline
-    [ "$style" = "boxsingleline" ] && local parts=(
-    ┌ ─ ┐
-    │ │ │
-    ├ ┤
-    └ ─ ┘
-    ─ ┴ ┬
-    ┼
-    )
+  # boxverticaldoublehorizontalsingle
+  [ "$style" = "boxverticaldoublehorizontalsingle" ] && local parts=(
+  ╓ ─ ╖
+  ║ ║ │
+  ╠ ╣
+  ╙ ─ ╜
+  ─ ┴ ┬
+  ┼
+  )
 
-    # boxsolid
-    [ "$style" = "boxsolid" ] && local parts=(
-    █ ▀ █
-    █ █ █
-    █ █
-    █ ▄ █
-    ▄ █ █
-    █
-    )
+  # boxsingleline
+  [ "$style" = "boxsingleline" ] && local parts=(
+  ┌ ─ ┐
+  │ │ │
+  ├ ┤
+  └ ─ ┘
+  ─ ┴ ┬
+  ┼
+  )
 
-    # Dynamic draw commands.
-    do_linefill() { rst; set_border_colour; symbol_repeat "${parts[11]}" "$linesize"; }
-    do_topfill() { rst; set_border_colour; symbol_repeat "${parts[1]}" "$linesize"; }
-    do_bottomfill() { rst; set_border_colour; symbol_repeat "${parts[9]}" "$linesize"; }
-    do_autofill() { symbol_repeat " " "$border_space"; }
-    do_margin() { symbol_repeat " " "$margin"; }
-    do_space() { printf " "; }
-    do_godown() { printf "\n"; }
+  # boxsolid
+  [ "$style" = "boxsolid" ] && local parts=(
+  █ ▀ █
+  █ █ █
+  █ █
+  █ ▄ █
+  ▄ █ █
+  █
+  )
 
-    # Array that contains the commands that are executed with "do_commands", like "do_margin"
-    local dynmc_cmds=(
-    "0" "0" "0"
-    "0" "0" "0"
-    "0" "0"
-    "0" "0" "0"
-    "0" "0" "0"
-    "0"
-    "do_space" "do_godown"
-    "do_linefill" "do_margin" "do_autofill"
-    "do_topfill" "do_bottomfill"
-    )
+  # Dynamic draw commands.
+  do_linefill() { rst; set_border_colour; symbol_repeat "${parts[11]}" "$linesize"; }
+  do_topfill() { rst; set_border_colour; symbol_repeat "${parts[1]}" "$linesize"; }
+  do_bottomfill() { rst; set_border_colour; symbol_repeat "${parts[9]}" "$linesize"; }
+  do_autofill() { symbol_repeat " " "$border_space"; }
+  do_margin() { symbol_repeat " " "$margin"; }
+  do_space() { printf " "; }
+  do_godown() { printf "\n"; }
 
-    # 'for loop' to check if the required symbol is a static or a dynamic symbol.
-    for i_search_thing in "$@"; do
-        local part_index="0"
-        for n_part_cmd in "${parts_cmds[@]}"; do
-            if [ ! "$n_part_cmd" = "$i_search_thing" ]; then
-                part_index="$((++part_index))"
-            elif [ "$n_part_cmd" = "$i_search_thing" ]; then
-                if [[ "${parts_cmds[$part_index]}" == "$dynmc_cmd"*  ]]; then
-                    "${dynmc_cmds[$part_index]}"
-                else
-                    prnt "${parts[$part_index]}"
-                fi
-                unset part_index
-                break
-            fi
-        done
-    done
+  # Array that contains the commands that are executed with "do_commands", like "do_margin"
+  local dynmc_cmds=(
+  "0" "0" "0"
+  "0" "0" "0"
+  "0" "0"
+  "0" "0" "0"
+  "0" "0" "0"
+  "0"
+  "do_space" "do_godown"
+  "do_linefill" "do_margin" "do_autofill"
+  "do_topfill" "do_bottomfill"
+  )
 
-    unset -v prnt_args dynmc_cmd parts_cmds parts dynmc_cmds i_search_thing part_index
-    unset -f prnt do_linefill do_topfill do_bottomfill do_margin do_autofill do_space do_godown
+  __list_elements()
+  {
+    local elmt indx
+    minimal_size="60"
+    indx="0"
+    say "TITLE: draw build-in elements:
+
+'Draw Command'            'Element drawn'
+
+$(
+for elmt in "${parts_cmds[@]}"; do
+  if [[ "${dynmc_cmds[$indx]}" == "0" ]]; then
+    local n_cmd part border_space
+    part="${parts[$indx]}"
+    n_cmd="${#elmt}"
+    border_space="$((minimal_size / 2))"
+    border_space="$((border_space - n_cmd))"
+    printf '%s' "'draw $elmt'"; do_autofill; printf '%s' "Will draw: '$part'"; newline
+    unset -v part n_cmd border_space
+  fi
+  indx=$((indx+1))
+done
+unset -v elmt indx minimal_size
+)
+
+TITLE: The following command sequence:
+
+'draw topleftcorner top top top_c top toprightcorner'
+'newline'
+'draw leftside_c line line junction line bottomrightcorner'
+'newline'
+'draw leftside; printf 'Hi'; draw rightside'
+'newline'
+'draw bottomleftcorner bottom bottom bottomrightcorner'
+'newline'
+
+TITLE: Will draw what's below:"
+draw topleftcorner top top top_c top toprightcorner
+newline
+draw leftside_c line line junction line bottomrightcorner
+newline
+draw leftside; printf "Hi"; draw rightside
+newline
+draw bottomleftcorner bottom bottom bottomrightcorner
+newline
+
+  }
+  [ "$*" = "list_elements" ] && __list_elements && return 0
+
+  # 'for loop' to check if the required symbol is a static or a dynamic symbol.
+  for i_search_thing in "$@"; do # Goes through all items in the command.
+      local part_index="0"
+      for n_part_cmd in "${parts_cmds[@]}"; do
+          if [ ! "$n_part_cmd" = "$i_search_thing" ]; then
+              part_index="$((++part_index))"
+          elif [ "$n_part_cmd" = "$i_search_thing" ]; then
+              if [[ "${parts_cmds[$part_index]}" == "$dynmc_cmd"*  ]]; then
+                  "${dynmc_cmds[$part_index]}"
+              else
+                  prnt "${parts[$part_index]}"
+              fi
+              unset part_index
+              break
+          fi
+      done
+  done
+
+  unset -v prnt_args dynmc_cmd parts_cmds parts dynmc_cmds i_search_thing part_index built_in_styles
+  unset -f prnt do_linefill do_topfill do_bottomfill do_margin do_autofill do_space do_godown
 }
 
 say()
 {
-    [ -t 0 ] && [ -z "$*" ] && return 0 # If nothing is given to say from stdin nor as an argument, then exit.
-    unset -v msg
-    [ -z "$weight" ] && weight=""
-    [ -z "$border_colour" ] && border_colour=""
-    [ -z "$debug" ] && debug=""
+  # Short helop commands.
+  local text_example colour bg_colour
+  read -r -d '' text_example << EOM
+Just a normal piece of text.
 
-    local valid_aligns="left right centre center"
-    # Parse the command line arguments to get text alignment and colour. And then validates the colour.
-    local opt # Variable representing user's input, to parse options
-    for opt in "$@"; do # Walks through all arguments and removes them from "$@" if they are valid.
-      [[ "$opt" == "--colour" || "$opt" == "--color" || "$opt" == "-c" ]] && colour="$2" && shift 2
-      [[ "$opt" == "--colour="* || "$opt" == "--color="* || "$opt" == "-c="* ]] && colour="${opt#*=}" && shift 1
-      [[ "$opt" = "--align" || "$opt" = "-a" ]] && align="$2" && shift 2
-      [[ "$opt" = "--align="* || "$opt" = "-a="* ]] && align="${opt#*=}" && shift 1
+Line above is and empty line.
+Another line.
+And another.
+EOM
+
+  __list_aligns()
+  {
+    printf "say --align=left\n"; say --align left "$text_example"; newline
+    printf "say --align=right\n"; say --align right "$text_example"; newline
+    printf "say --align=centre\n"; say --align centre "$text_example"; newline
+    return 0
+  }
+
+  __list_weights()
+  {
+    printf "weight=normal say\n"; weight=normal say "$text_example"; newline
+    printf "weight=dim say\n"; weight=dim say "$text_example"; newline
+    printf "weight=bold say\n"; weight=bold say "$text_example"; newline
+    return 0
+  }
+
+  __list_colours_fg()
+  {
+    local clr_itm
+    for clr_itm in $(set_colour); do
+      printf '%s' "say --colour=$clr_itm"; newline; say --colour="$clr_itm" "$text_example"; newline
     done
-    unset -v opt
-    [[ ! "$(set_colour)" =~ $colour ]] && echo "Can't reconise colour '$colour'" && unset -v colour align && return 1
-    [[ ! "$valid_aligns" =~ $align ]] && echo "'$align' is an invalid alignment" && unset -v colour align && return 1
-    unset -v valid_aligns
+    unset -v clr_itm
+    return 0
+  }
 
-    if [ ! -t 0 ]; then # Checks if input is coming from the standard input.
-      [ -z "$*" ] && msg="$(cat)" # If only stdin and no command line arg. Then with command line arg.
-      [ -n "$*" ] && msg="$(cat)
+  __list_colours_bg()
+  {
+    local clr_itm
+    for clr_itm in $(set_colour); do
+      printf '%s' "say --bg-colour=$clr_itm"; newline; say --bg-colour="$clr_itm" "$text_example"; newline
+    done
+    unset -v clr_itm
+    return 0
+  }
+
+  __list_border_colours()
+  {
+    local clr_itm
+    for clr_itm in $(set_colour); do
+      printf '%s' "border_colour=$clr_itm say"; newline; border_colour="$clr_itm" say "$text_example"; newline
+    done
+    unset -v clr_itm
+    return 0
+  }
+
+  __list_border_styles()
+  {
+    local stl_itm
+    for stl_itm in $(draw show_styles); do
+      printf '%s' "style=$stl_itm say"; newline; style="$stl_itm" say "$text_example"; newline
+    done
+    unset -v stl_itm
+    return 0
+  }
+
+  [ "$*" = "list_colours" ] || [ "$*" = "list_colours_fg" ] && __list_colours_fg && return 0
+  [ "$*" = "list_colours_bg" ] && __list_colours_bg && return 0
+  [ "$*" = "list_weights" ] && __list_weights && unset -v weight && return 0
+  [ "$*" = "list_aligns" ] && __list_aligns && return 0
+  [ "$*" = "list_border_colours" ] && __list_border_colours && return 0
+  [ "$*" = "list_border_styles" ] && __list_border_styles && return 0
+  [ "$*" = "list_draw_elements" ] && draw list_elements && return 0
+
+  [ -t 0 ] && [ -z "$*" ] && return 0 # If nothing is given to say from stdin nor as an argument, then exit.
+  unset -v msg
+
+  [ -z "$weight" ] && weight=""
+  [ -z "$border_colour" ] && border_colour=""
+  [ -z "$debug" ] && debug=""
+  [ -z "$bg_colour" ] && bg_colour=""
+
+  local valid_aligns="left right centre center"
+  # Parse the command line arguments to get text alignment and colour. And then validates the colour.
+  local opt # Variable representing user's input, to parse options
+  for opt in "$@"; do # Walks through all arguments and removes them from "$@" if they are valid.
+    [[ "$opt" == "--colour" || "$opt" == "--color" || "$opt" == "-c" ]] && colour="$2" && shift 2
+    [[ "$opt" == "--colour="* || "$opt" == "--color="* || "$opt" == "-c="* ]] && colour="${opt#*=}" && shift 1
+    [[ "$opt" == "--bg-colour" || "$opt" == "--bg-color" || "$opt" == "-bg-c" ]] && bg_colour="$2" && shift 2
+    [[ "$opt" == "--bg-colour="* || "$opt" == "--bg-color="* || "$opt" == "-bg-c="* ]] && bg_colour="${opt#*=}" && shift 1
+    [[ "$opt" = "--align" || "$opt" = "-a" ]] && align="$2" && shift 2
+    [[ "$opt" = "--align="* || "$opt" = "-a="* ]] && align="${opt#*=}" && shift 1
+  done
+  unset -v opt
+  [[ ! "$(set_colour)" =~ $colour ]] && echo "Can't reconise colour '$colour'" && unset -v colour bg_colour align && return 1
+  [[ ! "$(set_colour)" =~ $bg_colour ]] && echo "Can't reconise colour '$bg_colour'" && unset -v colour bg_colour align && return 1
+  [[ ! "$valid_aligns" =~ $align ]] && echo "'$align' is an invalid alignment" && unset -v colour bg_colour align && return 1
+  unset -v valid_aligns
+
+  if [ ! -t 0 ]; then # Checks if input is coming from the standard input.
+    [ -z "$*" ] && msg="$(cat)" # If only stdin and no command line arg. Then with command line arg.
+    [ -n "$*" ] && msg="$(cat)
 $*"
-    elif [[ "$*" == *".txt" ]]; then # Checks if input is a text file.
-        for text_file in "$@"; do
-            if [[ "$text_file" == *".txt" ]]; then
-                msg="$(cat "$text_file")"
-                unset -v text_file
-                break
-            fi
-        done
-        unset -v text_file
-    else
-      msg="$*"
-    fi
+  elif [[ "$*" == *".txt" ]]; then # Checks if input is a text file.
+      for text_file in "$@"; do
+          if [[ "$text_file" == *".txt" ]]; then
+              msg="$(cat "$text_file")"
+              unset -v text_file
+              break
+          fi
+      done
+      unset -v text_file
+  else
+    msg="$*"
+  fi
 
-    [ -z "$msg" ] && return 0 # If there's nothing for say to print, then exit.
+  [ -z "$msg" ] && return 0 # If there's nothing for say to print, then exit.
 
-    do_work()
+  do_work()
+  {
+  # Function that will read text in '$msg' and find how long is the longest line.
+  find_longest_line()
+  {
+    local line_length="0"
+    local line_content=""
+    while IFS= read -r line_content; do # Reading line by line.
+      if [[ "$line_content" == "TITLE:"* ]]; then # "Titles" Are printed without "TITLE: ", so remove it from the column count.
+          local line_content="${line_content//TITLE: /}"
+      fi
+      if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
+          local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
+      fi
+   done <<< "$msg"
+   printf "%s$line_length"
+   unset -v line_content line_length
+  }
+
+
+  local longest_line
+  longest_line="$(find_longest_line)" # Length of the longest line in the text.
+  unset -f find_longest_line
+  local margin="0" # Default margin size between the side of the box and text.
+  local spacesize="1" # Basically adjust the amount of space on both sides of the text to the box.
+  [ -z "$minimal_size" ] && local minimal_size="10" # Box will not be smaller than this, no matter how little the text is.
+  if (( "$longest_line" <= "$minimal_size" )); then
+      local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
+  elif (( "$longest_line" > "$minimal_size" )); then
+      local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
+  fi
+
+  # Draws the top of the box
+  draw topleftcorner do_topfill toprightcorner do_godown
+
+  # While loop that brakes the whole text in individual lines for processing and printing.
+  while IFS= read -r text_line; do
+
+    # This loop runs, for each line, calculations and printing.
+    text_in_a_box()
     {
-        # Function that will read text in '$msg' and find how long is the longest line.
-        find_longest_line()
+      # Formats the text according to first keyword on each line
+      apply_text_effect()
+      {
+          # Checks if the line contain any of these works and apply colour code.
+          if [[ "$text_line" == "ERROR:"* ]] || [[ "$text_line" == "ERR:"* ]]; then
+              c_error
+          elif [[ "$text_line" == "INFO:"* ]]; then
+              c_info
+          elif [[ "$text_line" == "WARN:"* ]] || [[ "$text_line" == "WARNING:"* ]]; then
+              c_warning
+          elif [[ "$text_line" == "DEBUG:"* ]] || [[ "$text_line" == "DBG:"* ]] || [[ "$text_line" == "ADV_DBG:"* ]]; then
+              c_debug
+          elif [[ "$text_line" == "NOTICE:"* ]] || [[ "$text_line" == "NOTE:"* ]]; then
+              c_notice
+          elif [[ "$text_line" == "TITLE:"* ]]; then
+              c_title
+          else
+              set_colour fg "$1"
+              set_colour bg "$3"
+              [ "$weight" = "bold" ] || [ "$2" = "bold" ] && bold_on
+              [[ "$weight" == "light" || "$weight" == "faded" || "$weight" == "dim" ]] && fade_on
+              [[ "$2" == "light" || "$2" == "faded" || "$2" == "dim" ]] && fade_on
+              [ "$weight" = "normal" ] || [ "$2" = "normal" ] && bold_off
+          fi
+      }
+
+      # Final loop, calculates the line and spaces size and then prints the line.
+      write_out()
+      {
+        local txt_size="${#4}"
+        local border_space="$((linesize-(txt_size+margin)))" # Longest space between text and border.
+
+        centre_text()
         {
-            local line_length="0"
-            local line_content=""
-            while IFS= read -r line_content; do # Reading line by line.
-                if [[ "$line_content" == "TITLE:"* ]]; then # "Titles" Are printed without "TITLE: ", so remove it from the column count.
-                    local line_content="${line_content//TITLE: /}"
-                fi
-                if (( "${#line_content}" >= "$line_length" )); then # Checks if line read is longest than the previous.
-                    local line_length="${#line_content}" # If it is, get's the number of columns and set it to a variable.
-                fi
-           done <<< "$msg"
-           printf "%s$line_length"
-           unset -v line_content line_length
+          # Calculates the space before and after the text so the text is centrered.
+          local space_left="$(((linesize/ 2)-(txt_size/2)))"; local space_right="$((linesize-(space_left+txt_size)))"
+          symbol_repeat " " "$space_left"
+          apply_text_effect "$2" "$3" "$bg_colour"
+          printf '%s' "$1"
+          rst
+          symbol_repeat " " "$space_right" # Adds empty space, print text and adds space.
+          unset -v space_left space_right
         }
 
+        align_text_left()
+        {
+          draw do_margin
+          apply_text_effect "$2" "$3" "$bg_colour"
+          printf '%s' "$1"
+          rst
+          draw do_autofill
+        }
 
-        local longest_line
-        longest_line="$(find_longest_line)" # Length of the longest line in the text.
-        unset -f find_longest_line
-        local margin="0" # Default margin size between the side of the box and text.
-        local spacesize="1" # Basically adjust the amount of space on both sides of the text to the box.
-        local minimal_size="10" # Box will not be smaller than this, no matter how little the text is.
-        if (( "$longest_line" <= "$minimal_size" )); then
-            local linesize="$minimal_size" # If the longest line is shorter than minimal_size, then minimal_size will become the length.
-        elif (( "$longest_line" > "$minimal_size" )); then
-            local linesize="$((longest_line+spacesize))" # Otherwise, line length + space after the border will be the length.
-        fi
+        align_text_right()
+        {
+          draw do_autofill
+          apply_text_effect "$2" "$3" "$bg_colour"
+          printf '%s' "$1"
+          rst
+          draw do_margin
+        }
 
-        # Draws the top of the box
-        draw topleftcorner do_topfill toprightcorner do_godown
+        rst
+        [ "$1" = "centre" ] || [ "$1" = "center" ] && centre_text "$4" "$3" "$2" # Centres text.
+        [ "$1" = "left" ] || [ -z "$1" ] && align_text_left "$4" "$3" "$2" # Aligns to the left.
+        [ "$1" = "right" ] && align_text_right "$4" "$3" "$2" # Aligns to the right.
+        rst
 
-        # While loop that brakes the whole text in individual lines for processing and printing.
-        while IFS= read -r text_line; do
+        unset -v border_space txt_size
+      }
 
-            # This loop runs, for each line, calculations and printing.
-            text_in_a_box()
-            {
-                # Formats the text according to first keyword on each line
-                apply_text_effect()
-                {
-                    # Checks if the line contain any of these works and apply colour code.
-                    if [[ "$text_line" == "ERROR:"* ]] || [[ "$text_line" == "ERR:"* ]]; then
-                        c_error
-                    elif [[ "$text_line" == "INFO:"* ]]; then
-                        c_info
-                    elif [[ "$text_line" == "WARN:"* ]] || [[ "$text_line" == "WARNING:"* ]]; then
-                        c_warning
-                    elif [[ "$text_line" == "DEBUG:"* ]] || [[ "$text_line" == "DBG:"* ]] || [[ "$text_line" == "ADV_DBG:"* ]]; then
-                        c_debug
-                    elif [[ "$text_line" == "NOTICE:"* ]] || [[ "$text_line" == "NOTE:"* ]]; then
-                        c_notice
-                    elif [[ "$text_line" == "TITLE:"* ]]; then
-                        c_title
-                    else
-                        set_colour fg "$1"
-                        [ "$weight" = "bold" ] || [ "$2" = "bold" ] && bold_on
-                    fi
-                }
-
-                # Final loop, calculates the line and spaces size and then prints the line.
-                write_out()
-                {
-                    local txt_size="${#4}"
-                    local border_space="$((linesize-(txt_size+margin)))" # Longest space between text and border.
-
-                    centre_text()
-                    {
-                        # Calculates the space before and after the text so the text is centrered.
-                        local space_left="$(((linesize/ 2)-(txt_size/2)))"; local space_right="$((linesize-(space_left+txt_size)))"
-                        symbol_repeat " " "$space_left"
-                        apply_text_effect "$2" "$3"
-                        printf '%s' "$1"
-                        rst
-                        symbol_repeat " " "$space_right" # Adds empty space, print text and adds space.
-                        unset -v space_left space_right
-                    }
-
-                    align_text_left()
-                    {
-                        draw do_margin
-                        apply_text_effect "$2" "$3"
-                        printf '%s' "$1"
-                        rst
-                        draw do_autofill
-                    }
-
-                    align_text_right()
-                    {
-                        draw do_autofill
-                        apply_text_effect "$2" "$3"
-                        printf '%s' "$1"
-                        rst
-                        draw do_margin
-                    }
-
-                    rst
-                    [ "$1" = "centre" ] || [ "$1" = "center" ] && centre_text "$4" "$3" "$2" # Centres text.
-                    [ "$1" = "left" ] || [ -z "$1" ] && align_text_left "$4" "$3" "$2" # Aligns to the left.
-                    [ "$1" = "right" ] && align_text_right "$4" "$3" "$2" # Aligns to the right.
-                    rst
-
-                    unset -v border_space txt_size
-                }
-
-                # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
-                [ -z "$text_line" ] && draw leftside_c do_linefill
-                [ "$text_line" ] && draw leftside
-                if [ "$text_line" ]; then
-                    if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
-                        local no_title_text_line="${text_line//TITLE: /}"
-                        write_out "centre" "$weight" "$colour" "$no_title_text_line" # Formats and prints the line of text if the line is not empty.
-                    else
-                        write_out "$align" "$weight" "$colour" "$text_line" # Formats and prints the line of text if the line is not empty.
-                    fi
-                fi
-                # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
-                [ -z "$text_line" ] && draw rightside_c do_godown
-                [ "$text_line" ] && draw rightside do_godown
-            }
-
-            # Only prints a line, if either the line doesn't contain debug of if debug is enabled.
-            if [ ! "$debug" = "true" ] && [[ ! "$text_line" == "DEBUG:"* ]]; then
-                text_in_a_box
-            elif [ "$debug" = "true" ]; then
-                text_in_a_box
-            fi
-
-        done <<< "$msg"
-
-        # Draws the bottom of the box
-        draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
-    }
-
-    # Only run "do_work" if text/string is not empty and if string doesn't "contain DEBUG" or "debug=true".
-    if [ ! -d "$msg" ] && [ ! "$msg" = "" ]; then
-        if [ ! "$debug" = "true" ] && [[ ! "$msg" == "DEBUG:"* ]]; then
-            do_work
-        elif [ "$debug" = "true" ]; then
-            do_work
+      # If not an empty line, draws the left border. If empty, fill it with a line and draws a border that connects with the line.
+      [ -z "$text_line" ] && draw leftside_c do_linefill
+      [ "$text_line" ] && draw leftside
+      if [ "$text_line" ]; then
+        if [[ "$text_line" == "TITLE:"* ]]; then # Removes "TITLE: " from "TITLE: " containing lines.
+          local no_title_text_line="${text_line//TITLE: /}"
+          write_out "centre" "$weight" "$colour" "$no_title_text_line" # Formats and prints the line of text if the line is not empty.
         else
-            return 0
+          write_out "$align" "$weight" "$colour" "$text_line" "$bg_colour" # Formats and prints the line of text if the line is not empty.
         fi
-    else
-        return 0
+      fi
+      # If not an empty line, draws the right straight border. If empty, draws a border that conencts with a line.
+      [ -z "$text_line" ] && draw rightside_c do_godown
+      [ "$text_line" ] && draw rightside do_godown
+  }
+
+    # Only prints a line, if either the line doesn't contain debug of if debug is enabled.
+    if [ ! "$debug" = "true" ] && [[ ! "$text_line" == "DEBUG:"* ]]; then
+        text_in_a_box
+    elif [ "$debug" = "true" ]; then
+        text_in_a_box
     fi
 
-    unset -v style msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize minimal_size longest_line linesize text_line weight border_colour
-    unset -f text_in_a_box write_out apply_text_effect centre_text align_text_left align_text_right
-    return 0
+  done <<< "$msg"
+
+  # Draws the bottom of the box
+  draw bottomleftcorner do_bottomfill bottomrightcorner do_godown
+  }
+
+  # Only run "do_work" if text/string is not empty and if string doesn't "contain DEBUG" or "debug=true".
+  if [ ! -d "$msg" ] && [ ! "$msg" = "" ]; then
+      if [ ! "$debug" = "true" ] && [[ ! "$msg" == "DEBUG:"* ]]; then
+          do_work
+      elif [ "$debug" = "true" ]; then
+          do_work
+      else
+          return 0
+      fi
+  else
+      return 0
+  fi
+
+  unset -v style msg colour_result align_result align colour i_search_thing n_part_cmd p_search_thing margin spacesize
+  unset -v minimal_size longest_line linesize text_line weight bg_colour border_colour
+  unset -f text_in_a_box write_out apply_text_effect centre_text align_text_left align_text_right
+  return 0
 }
