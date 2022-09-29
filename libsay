@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# libsay - Version: 1.3-202209.28.193000
+# libsay - Version: 1.3-202209.30.003700
 # Library that adds the command "say" to print nice looking messages.
 # Not only that, it add a bunch of nice functions to the shell or a script.
 #
@@ -393,9 +393,9 @@ EOM
     [[ "$opt" = "--align="* || "$opt" = "-a="* ]] && align="${opt#*=}" && shift 1
   done
   unset -v opt
-  [[ ! "$(set_colour)" =~ $colour ]] && echo "Can't reconise colour '$colour'" && unset -v colour bg_colour align && return 1
-  [[ ! "$(set_colour)" =~ $bg_colour ]] && echo "Can't reconise colour '$bg_colour'" && unset -v colour bg_colour align && return 1
-  [[ ! "$valid_aligns" =~ $align ]] && echo "'$align' is an invalid alignment" && unset -v colour bg_colour align && return 1
+  [ -n "$colour" ] && [[ ! "$(set_colour)" =~ $colour ]] && echo "Can't reconise colour '$colour'" && unset -v colour bg_colour align && return 1
+  [ -n "$bg_colour" ] && [[ ! "$(set_colour)" =~ $bg_colour ]] && echo "Can't reconise colour '$bg_colour'" && unset -v colour bg_colour align && return 1
+  [ -n "$align" ] && [[ ! "$valid_aligns" =~ $align ]] && echo "'$align' is an invalid alignment" && unset -v colour bg_colour align && return 1
   unset -v valid_aligns
 
   if [ ! -t 0 ]; then # Checks if input is coming from the standard input.
